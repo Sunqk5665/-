@@ -1,0 +1,109 @@
+BL51 BANKED LINKER/LOCATER V6.00                                                        11/03/2010  21:00:29  PAGE 1
+
+
+BL51 BANKED LINKER/LOCATER V6.00, INVOKED BY:
+D:\PROGRAM FILES\KEIL UVISION3\C51\BIN\BL51.EXE pxh.obj TO pxh RAMSIZE (256)
+
+
+MEMORY MODEL: SMALL
+
+
+INPUT MODULES INCLUDED:
+  pxh.obj (PXH)
+  D:\PROGRAM FILES\KEIL UVISION3\C51\LIB\C51S.LIB (?C_STARTUP)
+
+
+LINK MAP OF MODULE:  pxh (PXH)
+
+
+            TYPE    BASE      LENGTH    RELOCATION   SEGMENT NAME
+            -----------------------------------------------------
+
+            * * * * * * *   D A T A   M E M O R Y   * * * * * * *
+            REG     0000H     0008H     ABSOLUTE     "REG BANK 0"
+            DATA    0008H     0001H     UNIT         _DATA_GROUP_
+            IDATA   0009H     0001H     UNIT         ?STACK
+
+            * * * * * * *   C O D E   M E M O R Y   * * * * * * *
+            CODE    0000H     0003H     ABSOLUTE     
+            CODE    0003H     002DH     UNIT         ?PR?MAIN?PXH
+            CODE    0030H     000EH     UNIT         ?PR?_DELAYMS?PXH
+            CODE    003EH     000CH     UNIT         ?C_C51STARTUP
+
+
+
+OVERLAY MAP OF MODULE:   pxh (PXH)
+
+
+SEGMENT                          DATA_GROUP 
+  +--> CALLED SEGMENT          START    LENGTH
+----------------------------------------------
+?C_C51STARTUP                  -----    -----
+  +--> ?PR?MAIN?PXH
+
+?PR?MAIN?PXH                   0008H    0001H
+  +--> ?PR?_DELAYMS?PXH
+
+
+
+SYMBOL TABLE OF MODULE:  pxh (PXH)
+
+  VALUE           TYPE          NAME
+  ----------------------------------
+
+  -------         MODULE        PXH
+  C:0000H         SYMBOL        _ICE_DUMMY_
+  D:0090H         PUBLIC        P1
+  D:00B0H         PUBLIC        P3
+  D:00A8H         PUBLIC        IE
+  B:00A8H.4       PUBLIC        ES
+  D:00B8H         PUBLIC        IP
+  B:0098H.1       PUBLIC        TI
+BL51 BANKED LINKER/LOCATER V6.00                                                      11/03/2010  21:00:29  PAGE 2
+
+
+  C:0003H         PUBLIC        main
+  D:0099H         PUBLIC        SBUF
+  D:0098H         PUBLIC        SCON
+  D:0088H         PUBLIC        TCON
+  C:0030H         PUBLIC        _delayms
+  B:0090H.0       PUBLIC        CLE
+  D:00C8H         PUBLIC        T2CON
+  D:00D0H         PUBLIC        PSW
+  -------         PROC          MAIN
+  -------         DO            
+  D:0008H         SYMBOL        temp
+  -------         ENDDO         
+  C:0003H         LINE#         8
+  C:0003H         LINE#         9
+  C:0003H         LINE#         11
+  C:0006H         LINE#         12
+  C:0008H         LINE#         13
+  C:000BH         LINE#         14
+  C:000BH         LINE#         15
+  C:000BH         LINE#         16
+  C:000DH         LINE#         17
+  C:0010H         LINE#         18
+  C:0013H         LINE#         19
+  C:0015H         LINE#         20
+  C:0017H         LINE#         21
+  C:001CH         LINE#         22
+  C:0021H         LINE#         23
+  C:002EH         LINE#         24
+  -------         ENDPROC       MAIN
+  -------         PROC          _DELAYMS
+  D:0007H         SYMBOL        t
+  -------         DO            
+  D:0007H         SYMBOL        x
+  D:0006H         SYMBOL        y
+  -------         ENDDO         
+  C:0030H         LINE#         27
+  C:0030H         LINE#         28
+  C:0030H         LINE#         30
+  C:0036H         LINE#         31
+  C:003DH         LINE#         32
+  -------         ENDPROC       _DELAYMS
+  -------         ENDMOD        PXH
+
+Program Size: data=10.0 xdata=0 code=74
+LINK/LOCATE RUN COMPLETE.  0 WARNING(S),  0 ERROR(S)

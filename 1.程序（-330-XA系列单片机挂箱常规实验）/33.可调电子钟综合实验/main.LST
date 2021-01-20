@@ -1,0 +1,488 @@
+C51 COMPILER V9.52.0.0   MAIN                                                              10/24/2019 14:38:57 PAGE 1   
+
+
+C51 COMPILER V9.52.0.0, COMPILATION OF MODULE MAIN
+OBJECT MODULE PLACED IN main.OBJ
+COMPILER INVOKED BY: E:\Keil4\C51\BIN\C51.EXE main.c BROWSE DEBUG OBJECTEXTEND TABS(2)
+
+line level    source
+
+   1          /*********************************
+   2          名称：  LCD显示1302时钟
+   3          ***********************************/
+   4          
+   5          #include <reg52.h>
+   6          #include "1302.h"
+   7          #include "LCD1602.h"
+   8          sbit SPK = P3^5;
+   9          
+  10          unsigned char num,AC_hour=0,AC_minute=0x01;
+  11          unsigned char tab[]="Alarm Clock";
+  12          void delay(unsigned char i);
+  13          
+  14          /************************ 自定义字符区***********************************************************/
+  15          #define   YEAR  0
+  16          #define   MONTH 1
+  17          #define   DAY   2
+  18          
+  19          code unsigned char Chinese_Table[]={
+  20                              0x08,0x0F,0x12,0x0F,0x0A,0x1F,0x02,0x02,     //年: 00H 
+  21                                  0x0F,0x09,0x0F,0x09,0x0F,0x09,0x11,0x00,     //月: 01H
+  22                                  0x1F,0x11,0x11,0x1F,0x11,0x11,0x1F,0x00,   //日: 02H
+  23                            };   
+  24          
+  25          void Write_My_Data(void)                             
+  26          {
+  27   1        unsigned char num,i;
+  28   1        i=0;
+  29   1        num=sizeof(Chinese_Table);
+  30   1          LCD_en_com(0x40); //Set start address of CGRAM
+  31   1        while(num--)
+  32   1          LCD_en_dat(Chinese_Table[i++]);//write data into CGRAM    
+  33   1      }
+  34          /******************************************************************************************************/
+  35          
+  36          
+  37          //---------------------------日期变量定义------------------------------------------------
+  38          #define second  Day_Table[0]
+  39          #define minute  Day_Table[1]
+  40          #define hour  Day_Table[2]
+  41          #define day   Day_Table[3]
+  42          #define month Day_Table[4]
+  43          #define week  Day_Table[5]
+  44          #define year_l  Day_Table[6]
+  45          
+  46          //               秒      分        时     日    月     星期   年    
+  47          unsigned char Day_Table[]={0x56,  0x59,   0x23,   0x9,    0x1,     0x7,   0x12 };
+  48          unsigned char year_h = 0x20;
+  49          
+  50          union DATA_UNION  {
+  51                      unsigned char a,b,c,d,e,f,g;
+  52                      unsigned char Day_Tab[7];
+  53                    };
+  54          
+  55          //------------------------------------------------------------------------------------------
+C51 COMPILER V9.52.0.0   MAIN                                                              10/24/2019 14:38:57 PAGE 2   
+
+  56          
+  57          
+  58          void LCD_display_all(void)
+  59          {
+  60   1        LCD_set_xy(0,0);//第一行，第一个位
+  61   1        LCD_en_dat(hour>>4      |0x30);
+  62   1        LCD_en_dat(hour&0x0f    |0x30);//小时
+  63   1        LCD_en_dat(':');
+  64   1        LCD_en_dat(minute>>4    |0x30);
+  65   1        LCD_en_dat(minute&0x0f  |0x30);//分
+  66   1        LCD_en_dat(':');
+  67   1        LCD_en_dat(second>>4    |0x30);
+  68   1        LCD_en_dat(second&0x0f  |0x30);//秒
+  69   1      
+  70   1        LCD_write_char(0,13,week|0x30);//星期
+  71   1      
+  72   1        LCD_set_xy(1,5);//第二行，第6个位
+  73   1        LCD_en_dat(year_h>>4  |0x30);
+  74   1        LCD_en_dat(year_h&0x0f  |0x30);//年
+  75   1        LCD_en_dat(year_l>>4  |0x30);
+  76   1        LCD_en_dat(year_l&0x0f  |0x30);
+  77   1        LCD_en_dat(YEAR);
+  78   1        LCD_en_dat(month>>4     |0x30);
+  79   1        LCD_en_dat(month&0x0f   |0x30);
+  80   1        LCD_en_dat(MONTH);
+  81   1        LCD_en_dat(day>>4       |0x30);
+  82   1        LCD_en_dat(day&0x0f     |0x30);
+  83   1        LCD_en_dat(DAY);  
+  84   1      }
+  85          
+  86          
+  87          
+  88          
+  89          void delayms(unsigned char t)
+  90          {
+  91   1        unsigned char x,y;
+  92   1        for(x=t;x>0;x--)
+  93   1          for(y=110;y>0;y--);
+  94   1      }
+  95          /*************************************************
+  96          **名    称：矩阵键盘扫描函数
+  97          **入口参数：无
+  98          **返 回 值：按下键的 键值
+  99          *************************************************/
+ 100          unsigned char keyscan()
+ 101          {
+ 102   1        P1=0xfe;
+ 103   1        if(P1!=0xef)
+ 104   1        {
+ 105   2          delayms(10);
+ 106   2          if(P1!=0xfe)
+ 107   2          {
+ 108   3            switch(P1)
+ 109   3            {
+ 110   4              case 0xee : num=0;
+ 111   4                    break;
+ 112   4              case 0xde : num=1;
+ 113   4                    break;
+ 114   4              case 0xbe : num=2;
+ 115   4                    break;
+ 116   4              case 0x7e : num=3;
+ 117   4                    break;
+C51 COMPILER V9.52.0.0   MAIN                                                              10/24/2019 14:38:57 PAGE 3   
+
+ 118   4            }
+ 119   3          }
+ 120   2        }
+ 121   1      
+ 122   1        P1=0xfd;
+ 123   1        if(P1!=0xfd)
+ 124   1        {
+ 125   2          delayms(10);
+ 126   2          if(P1!=0xfd)
+ 127   2          {
+ 128   3            switch(P1)
+ 129   3            {
+ 130   4              case 0xed : num=4;
+ 131   4                    break;
+ 132   4              case 0xdd : num=5;
+ 133   4                    break;
+ 134   4              case 0xbd : num=6;
+ 135   4                    break;
+ 136   4              case 0x7d : num=7;
+ 137   4                    break;
+ 138   4            }
+ 139   3          }
+ 140   2        }
+ 141   1      
+ 142   1        P1=0xfb;
+ 143   1        if(P1!=0xfb)
+ 144   1        {
+ 145   2          delayms(10);
+ 146   2          if(P1!=0xfb)
+ 147   2          {
+ 148   3            switch(P1)
+ 149   3            {
+ 150   4              case 0xeb : num=8;
+ 151   4                    break;
+ 152   4              case 0xdb : num=9;
+ 153   4                    break;
+ 154   4              case 0xbb : num=10;
+ 155   4                    break;
+ 156   4              case 0x7b : num=11;
+ 157   4                    break;
+ 158   4            }
+ 159   3          }
+ 160   2        }
+ 161   1      
+ 162   1        P1=0xf7;
+ 163   1        if(P1!=0xf7)
+ 164   1        {
+ 165   2          delayms(10);
+ 166   2          if(P1!=0xf7)
+ 167   2          {
+ 168   3            switch(P1)
+ 169   3            {
+ 170   4              case 0xe7 : num=12;
+ 171   4                    break;
+ 172   4              case 0xd7 : num=13;
+ 173   4                    break;
+ 174   4              case 0xb7 : num=14;
+ 175   4                    break;
+ 176   4              case 0x77 : num=15;
+ 177   4                    break;
+ 178   4            }
+ 179   3          }
+C51 COMPILER V9.52.0.0   MAIN                                                              10/24/2019 14:38:57 PAGE 4   
+
+ 180   2        }
+ 181   1      
+ 182   1        return num;
+ 183   1        
+ 184   1      }
+ 185          
+ 186          void AC_Clock()
+ 187          {
+ 188   1            LCD_write_string(0,0,tab);
+ 189   1            LCD_set_xy(1,9);
+ 190   1            LCD_en_dat(AC_hour>>4       |0x30);
+ 191   1            LCD_en_dat(AC_hour&0x0f     |0x30);//小时
+ 192   1            LCD_en_dat(':');
+ 193   1            LCD_en_dat(AC_minute>>4     |0x30);
+ 194   1            LCD_en_dat(AC_minute&0x0f   |0x30);//分
+ 195   1      }
+ 196          //==============================================================================================
+ 197          
+ 198          void main(void)
+ 199          {
+ 200   1        unsigned char tem;
+ 201   1        SPK=0;
+ 202   1        LCD_init();
+ 203   1        Write_My_Data();
+ 204   1        v_Set1302(Day_Table);
+ 205   1        while(1)
+ 206   1        { 
+ 207   2          LCD_display_all();
+ 208   2          v_Get1302(Day_Table);
+ 209   2          tem=keyscan();
+ 210   2          if(tem==15)
+ 211   2          {
+ 212   3            LCD_en_com(0x0e);
+ 213   3            LCD_en_com(0x02);
+ 214   3            
+ 215   3            while(tem==15) tem=keyscan(); 
+ 216   3            while((tem>=10)&&(tem<14)) tem=keyscan();     
+ 217   3            while(tem>=0&&tem<=9)
+ 218   3            {
+ 219   4              hour=(tem<<4)|(hour&0x0f);        
+ 220   4              LCD_display_all();
+ 221   4              LCD_set_xy(0,0);
+ 222   4              tem=keyscan();            
+ 223   4            }
+ 224   3            
+ 225   3            while(tem!=14) tem=keyscan();
+ 226   3            LCD_en_com(0x14);
+ 227   3            while(tem==14) tem=keyscan(); 
+ 228   3            while((tem>=10)&&(tem<14)) tem=keyscan();
+ 229   3            while(tem>=0&&tem<=9)
+ 230   3            {
+ 231   4              hour=tem|(hour&0xf0);       
+ 232   4              LCD_display_all(); 
+ 233   4              LCD_set_xy(0,1);        
+ 234   4              tem=keyscan();
+ 235   4            }
+ 236   3            while(tem!=14) tem=keyscan();
+ 237   3            LCD_en_com(0x14);  LCD_en_com(0x14);
+ 238   3            while(tem==14) tem=keyscan();
+ 239   3            while((tem>=10)&&(tem<14)) tem=keyscan();
+ 240   3            while(tem>=0&&tem<=9)
+ 241   3            {
+C51 COMPILER V9.52.0.0   MAIN                                                              10/24/2019 14:38:57 PAGE 5   
+
+ 242   4              minute=(tem<<4)|(minute&0x0f); 
+ 243   4              LCD_display_all();
+ 244   4              LCD_set_xy(0,3);
+ 245   4              tem=keyscan();
+ 246   4            }
+ 247   3            
+ 248   3            while(tem!=14) tem=keyscan();
+ 249   3            LCD_en_com(0x14);
+ 250   3            while(tem==14) tem=keyscan();
+ 251   3            while((tem>=10)&&(tem<14)) tem=keyscan();
+ 252   3            while(tem>=0&&tem<=9)
+ 253   3            {
+ 254   4              minute=tem|(minute&0xf0);
+ 255   4              LCD_display_all();
+ 256   4              LCD_set_xy(0,4);
+ 257   4              tem=keyscan();
+ 258   4            }
+ 259   3            
+ 260   3            while(tem!=14) tem=keyscan();
+ 261   3            LCD_en_com(0x14);LCD_en_com(0x14);
+ 262   3            while(tem==14) tem=keyscan();
+ 263   3            while((tem>=10)&&(tem<14)) tem=keyscan();
+ 264   3            while(tem>=0&&tem<=9)
+ 265   3            {
+ 266   4              second=(tem<<4)|(second&0x0f);
+ 267   4              LCD_display_all();
+ 268   4              LCD_set_xy(0,6);
+ 269   4              tem=keyscan();
+ 270   4            }     
+ 271   3      
+ 272   3            while(tem!=14) tem=keyscan();
+ 273   3            LCD_en_com(0x14);
+ 274   3            while(tem==14) tem=keyscan();
+ 275   3            while((tem>=10)&&(tem<14)) tem=keyscan();
+ 276   3            while(tem>=0&&tem<=9)
+ 277   3            {
+ 278   4              second=tem|(second&0xf0); 
+ 279   4              LCD_display_all();
+ 280   4              LCD_set_xy(0,7);
+ 281   4              tem=keyscan();
+ 282   4            }
+ 283   3      
+ 284   3            while(tem!=14) tem=keyscan();
+ 285   3            LCD_en_com(0x14);LCD_en_com(0x14);LCD_en_com(0x14);
+ 286   3            LCD_en_com(0x14);LCD_en_com(0x14);LCD_en_com(0x14);
+ 287   3            while(tem==14) tem=keyscan();
+ 288   3            while((tem>=10)&&(tem<14)) tem=keyscan();
+ 289   3            while(tem>=0&&tem<=7)
+ 290   3            {
+ 291   4              week=tem; 
+ 292   4              LCD_display_all();
+ 293   4              LCD_set_xy(0,13);
+ 294   4              tem=keyscan();
+ 295   4            }
+ 296   3      
+ 297   3            while(tem!=14) tem=keyscan();
+ 298   3            LCD_set_xy(1,6);
+ 299   3            LCD_en_com(0x14);
+ 300   3            while(tem==14) tem=keyscan();
+ 301   3            while((tem>=10)&&(tem<14)) tem=keyscan();
+ 302   3            while(tem>=0&&tem<=9)
+ 303   3            {
+C51 COMPILER V9.52.0.0   MAIN                                                              10/24/2019 14:38:57 PAGE 6   
+
+ 304   4              year_l=(tem<<4)|(year_l&0x0f);
+ 305   4              LCD_display_all();
+ 306   4              LCD_set_xy(1,7);
+ 307   4              tem=keyscan();
+ 308   4            }     
+ 309   3      
+ 310   3            while(tem!=14) tem=keyscan();
+ 311   3            LCD_en_com(0x14);
+ 312   3            while(tem==14) tem=keyscan();
+ 313   3            while((tem>=10)&&(tem<14)) tem=keyscan();
+ 314   3            while(tem>=0&&tem<=9)
+ 315   3            {
+ 316   4              year_l=tem|(year_l&0xf0); 
+ 317   4              LCD_display_all();
+ 318   4              LCD_set_xy(1,8);
+ 319   4              tem=keyscan();
+ 320   4            }
+ 321   3      
+ 322   3            while(tem!=14) tem=keyscan();
+ 323   3            LCD_en_com(0x14); LCD_en_com(0x14);
+ 324   3            while(tem==14) tem=keyscan();
+ 325   3            while((tem>=10)&&(tem<14)) tem=keyscan();
+ 326   3            while(tem>=0&&tem<=9)
+ 327   3            {
+ 328   4              month=(tem<<4)|(month&0x0f);
+ 329   4              LCD_display_all();
+ 330   4              LCD_set_xy(1,10);
+ 331   4              tem=keyscan();
+ 332   4            }     
+ 333   3      
+ 334   3            while(tem!=14) tem=keyscan();
+ 335   3            LCD_en_com(0x14);
+ 336   3            while(tem==14) tem=keyscan();
+ 337   3            while((tem>=10)&&(tem<14)) tem=keyscan();
+ 338   3            while(tem>=0&&tem<=9)
+ 339   3            {
+ 340   4              month=tem|(month&0xf0); 
+ 341   4              LCD_display_all();
+ 342   4              LCD_set_xy(1,11);
+ 343   4              tem=keyscan();
+ 344   4            }
+ 345   3      
+ 346   3            while(tem!=14) tem=keyscan();
+ 347   3            LCD_en_com(0x14);LCD_en_com(0x14);
+ 348   3            while(tem==14) tem=keyscan();
+ 349   3            while((tem>=10)&&(tem<14)) tem=keyscan();
+ 350   3            while(tem>=0&&tem<=9)
+ 351   3            {
+ 352   4              day=(tem<<4)|(day&0x0f);
+ 353   4              LCD_display_all();
+ 354   4              LCD_set_xy(1,13);
+ 355   4              tem=keyscan();
+ 356   4            }     
+ 357   3      
+ 358   3            while(tem!=14) tem=keyscan();
+ 359   3            LCD_en_com(0x14);
+ 360   3            while(tem==14) tem=keyscan();
+ 361   3            while((tem>=10)&&(tem<14)) tem=keyscan();
+ 362   3            while(tem>=0&&tem<=9)
+ 363   3            {
+ 364   4              day=tem|(day&0xf0); 
+ 365   4              LCD_display_all();
+C51 COMPILER V9.52.0.0   MAIN                                                              10/24/2019 14:38:57 PAGE 7   
+
+ 366   4              LCD_set_xy(1,14);
+ 367   4              tem=keyscan();
+ 368   4            }
+ 369   3            while(tem==15) tem=keyscan();
+ 370   3            v_Set1302(Day_Table);
+ 371   3            LCD_en_com(0x0c);
+ 372   3          }
+ 373   2          if(tem==12)
+ 374   2          {
+ 375   3            LCD_en_com(0x01);
+ 376   3            AC_Clock();
+ 377   3            LCD_en_com(0x0c);
+ 378   3            tem=keyscan();
+ 379   3            while(tem!=13)
+ 380   3            {
+ 381   4              tem=keyscan();
+ 382   4              if(tem==15)
+ 383   4              { 
+ 384   5                LCD_set_xy(1,9);
+ 385   5                LCD_en_com(0x0e);
+ 386   5                while(tem==15) tem=keyscan();
+ 387   5                LCD_set_xy(1,9);
+ 388   5                while(tem>=0&&tem<=9)
+ 389   5                {
+ 390   6                  AC_hour=(tem<<4)|(AC_hour&0x0f);
+ 391   6                  AC_Clock();
+ 392   6                  LCD_set_xy(1,9);
+ 393   6                  tem=keyscan();    
+ 394   6                }
+ 395   5            
+ 396   5                while(tem!=14) tem=keyscan();
+ 397   5                LCD_set_xy(1,10);
+ 398   5                while(tem==14) tem=keyscan();
+ 399   5                
+ 400   5                while(tem>=0&&tem<=9)
+ 401   5                {
+ 402   6                  AC_hour=tem|(AC_hour&0xf0);
+ 403   6                  AC_Clock();
+ 404   6                  LCD_set_xy(1,10);
+ 405   6                  tem=keyscan();
+ 406   6                }
+ 407   5              
+ 408   5                while(tem!=14) tem=keyscan();
+ 409   5                LCD_set_xy(1,12);
+ 410   5                while(tem==14) tem=keyscan();
+ 411   5                
+ 412   5                while(tem>=0&&tem<=9)
+ 413   5                {
+ 414   6                  AC_minute=(tem<<4)|(AC_minute&0x0f); 
+ 415   6                  AC_Clock();
+ 416   6                  LCD_set_xy(1,12);
+ 417   6                  tem=keyscan();
+ 418   6                }
+ 419   5            
+ 420   5                while(tem!=14) tem=keyscan();
+ 421   5                LCD_set_xy(1,13);
+ 422   5                while(tem==14) tem=keyscan();
+ 423   5                
+ 424   5                while(tem>=0&&tem<=9)
+ 425   5                {
+ 426   6                  AC_minute=tem|(AC_minute&0xf0);
+ 427   6                  AC_Clock();
+C51 COMPILER V9.52.0.0   MAIN                                                              10/24/2019 14:38:57 PAGE 8   
+
+ 428   6                  LCD_set_xy(1,13);
+ 429   6                  tem=keyscan();
+ 430   6                }
+ 431   5                LCD_en_com(0x0c); 
+ 432   5             }
+ 433   4            }
+ 434   3            while(tem!=13) tem=keyscan(); //
+ 435   3            LCD_en_com(0x01);
+ 436   3          }
+ 437   2          if(hour==AC_hour&&minute==AC_minute&&tem!=11)//
+ 438   2            SPK=1;
+ 439   2          else 
+ 440   2            SPK=0;        
+ 441   2          delay(5000);
+ 442   2        } 
+ 443   1      }
+ 444          
+ 445          //--------------------------------------------------------------------------------------------------
+ 446          
+ 447          void delay(unsigned char i)
+ 448          {
+ 449   1        while(i--)
+ 450   1          ;
+ 451   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =   2239    ----
+   CONSTANT SIZE    =     24    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =     23       3
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

@@ -1,0 +1,156 @@
+C51 COMPILER V9.52.0.0   PXH                                                               06/10/2019 16:18:32 PAGE 1   
+
+
+C51 COMPILER V9.52.0.0, COMPILATION OF MODULE PXH
+OBJECT MODULE PLACED IN pxh.OBJ
+COMPILER INVOKED BY: E:\Keil\C51\BIN\C51.EXE pxh.c BROWSE DEBUG OBJECTEXTEND TABS(2)
+
+line level    source
+
+   1          /***************************************************************************
+   2          **实验名称: 16X16点阵滚动显示
+   3          **实验效果: "浙江求是科教设备有限公司"在16X16的点阵上有右至左移动.
+   4          **硬件环境: QSDP-01A V2.1.PCB
+   5          **编程作者: 裴秀辉
+   6          **公    司: 浙江求实科教设备有限公司
+   7          ***************************************************************************/
+   8          /*****************************头文件声明**************************************/
+   9          #include<reg52.h>
+  10          #include<intrins.h>
+  11          #include<pxh.h>
+  12          #include<IIC.h>
+  13          /*****************************IO引脚定义*************************************/
+  14          sbit ser=P1^0;
+  15          sbit nss=P1^1;
+  16          sbit clk=P1^2;
+  17          sbit WDI=P1^7;
+  18          /******************************数据定义*************************************/
+  19          unsigned char count,flog;
+  20          unsigned int offset;
+  21          
+  22          unsigned char lietab[]={0x7f,0xbf,0xdf,0xef,0xf7,0xfb,0xfd,0xfe};
+  23          /*************************函数声明********************************************/
+  24          void sendbyte(unsigned char dat);
+  25          void delayms(unsigned char t);
+  26          void init();
+  27          
+  28          /***********************主函数开始********************************************/
+  29          void main()
+  30          {
+  31   1        unsigned char i;
+  32   1        init();
+  33   1        init_IIC();
+  34   1        flog=readadd(2);
+  35   1        if(flog)
+  36   1        offset=readadd(2);
+  37   1      
+  38   1        while(1)
+  39   1        { 
+  40   2          WDI=0;
+  41   2          for(i=0;i<8;i++)
+  42   2          {
+  43   3            nss=0;
+  44   3            sendbyte(0xff);         //左半屏幕显示
+  45   3            sendbyte(lietab[i]);        //采用列扫描 在lietab[]中取值
+  46   3            sendbyte(tab[2*i+1+offset]);//与电路和tab[]有关
+  47   3            sendbyte(tab[2*i+offset]);  //与电路和tab[]有关
+  48   3            nss=1;            //595串入并出 4个值都送完了,才一起显示,
+  49   3            delayms(3);         //不然送一个显示一个会闪烁
+  50   3          }
+  51   2          for(i=8;i<16;i++)
+  52   2          {
+  53   3            nss=0;
+  54   3            sendbyte(lietab[i-8]);      //采用列扫描 在lietab[]中取值
+  55   3            sendbyte(0xff);         //右半屏幕显示
+C51 COMPILER V9.52.0.0   PXH                                                               06/10/2019 16:18:32 PAGE 2   
+
+  56   3            sendbyte(tab[2*i+1+offset]);
+  57   3            sendbyte(tab[2*i+offset]);
+  58   3            nss=1;
+  59   3            delayms(3);
+  60   3          } 
+  61   2         }
+  62   1      }
+  63          /*************************定时器T0初始化*****************************************/
+  64          void init()
+  65          {
+  66   1        TMOD=0x01;
+  67   1        EA=1;
+  68   1        ET0=1;
+  69   1        TH0=0x3c;
+  70   1        TL0=0xb0;
+  71   1        TR0=1;
+  72   1        
+  73   1        EX0=1;
+  74   1        IT0=0;
+  75   1        PX0=1;
+  76   1      }
+  77          /*************************定时器中断服务子程序*************************************/
+  78          void time0() interrupt 1 
+  79          {
+  80   1        TH0=0x3c;
+  81   1        TL0=0xb0;
+  82   1        count++;
+  83   1        if(count==2)     //控制滚动的速度
+  84   1        {
+  85   2          count=0;
+  86   2          offset+=2;     //滚动的偏移量offset
+  87   2        //  WDI=0;       //喂狗 脉冲
+  88   2          _nop_();
+  89   2          WDI=1;
+  90   2          _nop_();
+  91   2          _nop_();
+  92   2          //WDI=0;
+  93   2          if(offset==4900)
+  94   2            offset=0;  //循环鼓动
+  95   2        }   
+  96   1      }
+  97          
+  98          void init0() interrupt 0 
+  99          {
+ 100   1        flog=1;
+ 101   1        writeadd(1,flog);
+ 102   1        writeadd(2,offset); 
+ 103   1      }
+ 104          /***************************** 发送数据给595********************************/
+ 105          void sendbyte(unsigned char dat)
+ 106          {
+ 107   1        unsigned char i,temp;    //串转并的一般方法
+ 108   1        temp=dat;
+ 109   1        for(i=0;i<8;i++)
+ 110   1        {
+ 111   2      //    nss=0;
+ 112   2          if(temp&0x01)
+ 113   2            ser=1;
+ 114   2          else
+ 115   2            ser=0;
+ 116   2          clk=0;
+ 117   2          _nop_();
+C51 COMPILER V9.52.0.0   PXH                                                               06/10/2019 16:18:32 PAGE 3   
+
+ 118   2          _nop_();
+ 119   2          clk=1;
+ 120   2          temp>>=1;
+ 121   2      //    nss=1;
+ 122   2        } 
+ 123   1      }
+ 124          void delayms(unsigned char t)  //延时tms
+ 125          {
+ 126   1        unsigned char x,y;
+ 127   1        for(x=t;x>0;x--)
+ 128   1          for(y=110;y>0;y--);
+ 129   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    553    ----
+   CONSTANT SIZE    =   4064    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =     12       2
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

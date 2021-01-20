@@ -1,0 +1,70 @@
+C51 COMPILER V9.52.0.0   1                                                                 03/09/2017 14:28:42 PAGE 1   
+
+
+C51 COMPILER V9.52.0.0, COMPILATION OF MODULE 1
+OBJECT MODULE PLACED IN 1.OBJ
+COMPILER INVOKED BY: E:\keil4\C51\BIN\C51.EXE 1.c BROWSE DEBUG OBJECTEXTEND TABS(2)
+
+line level    source
+
+   1          /********************************
+   2          **实验名称：外中断实验
+   3          **硬件连接：P0口连接动态数码管a-h，P2口连接H1-H8，P3口连接触摸式查询键盘
+   4          **实现功能：动态数码管第一位循环显示从0-F，按下按键S3，则重新开始循环显示。
+   5          **编程时间：2017.3.9
+   6          /*********************************/
+   7          #include <reg52.h>
+   8          unsigned int t;
+   9          unsigned int z;
+  10          sbit P3_2=P3^2;
+  11          unsigned char a,b;
+  12          void delay(unsigned int t);
+  13          unsigned char tab[]={0xc0,0xf9,0xa4,0xb0,0x99,0x92,0x82,0xf8,
+  14                               0x80,0x90,0x88,0x83,0xc6,0xa1,0x86,0x8e};
+  15          void main()
+  16          {
+  17   1        EA=1;
+  18   1        EX0=1;
+  19   1        IT0=0;
+  20   1        while(1)
+  21   1        {
+  22   2          for(z=0;z<16;z++)
+  23   2           {          
+  24   3            P0=tab[z];
+  25   3            P2=0x01;
+  26   3            delay(1000);
+  27   3           }                
+  28   2         }
+  29   1      }
+  30          void delay(unsigned int t)
+  31          {
+  32   1        unsigned char j;
+  33   1        unsigned int i;
+  34   1        for(i=t;i>0;i--)
+  35   1          for(j=110;j>0;j--); 
+  36   1      }          
+  37          void ext0() interrupt 0 using 1
+  38          {
+  39   1           while(!P3_2)
+  40   1           {
+  41   2            P0=tab[z];
+  42   2            P2=0x01;
+  43   2          }    
+  44   1            z=16;
+  45   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    103    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =     22    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+C51 COMPILER V9.52.0.0   1                                                                 03/09/2017 14:28:42 PAGE 2   
+
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

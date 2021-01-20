@@ -1,0 +1,4 @@
+"STARTUP.obj",
+"warn.obj" 
+TO "warning" 
+RAMSIZE(256) 

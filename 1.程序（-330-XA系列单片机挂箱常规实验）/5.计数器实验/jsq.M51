@@ -1,0 +1,172 @@
+BL51 BANKED LINKER/LOCATER V6.22                                                        06/06/2019  10:40:17  PAGE 1
+
+
+BL51 BANKED LINKER/LOCATER V6.22, INVOKED BY:
+E:\KEIL\C51\BIN\BL51.EXE jsq.obj TO jsq RAMSIZE (256)
+
+
+MEMORY MODEL: SMALL
+
+
+INPUT MODULES INCLUDED:
+  jsq.obj (JSQ)
+  E:\KEIL\C51\LIB\C51S.LIB (?C_STARTUP)
+  E:\KEIL\C51\LIB\C51S.LIB (?C?SCDIV)
+  E:\KEIL\C51\LIB\C51S.LIB (?C_INIT)
+
+
+LINK MAP OF MODULE:  jsq (JSQ)
+
+
+            TYPE    BASE      LENGTH    RELOCATION   SEGMENT NAME
+            -----------------------------------------------------
+
+            * * * * * * *   D A T A   M E M O R Y   * * * * * * *
+            REG     0000H     0008H     ABSOLUTE     "REG BANK 0"
+            DATA    0008H     0001H     UNIT         ?DT?JSQ
+            IDATA   0009H     0001H     UNIT         ?STACK
+
+            * * * * * * *   C O D E   M E M O R Y   * * * * * * *
+            CODE    0000H     0003H     ABSOLUTE     
+            CODE    0003H     008CH     UNIT         ?C_C51STARTUP
+            CODE    008FH     004CH     UNIT         ?PR?DISPLAY?JSQ
+            CODE    00DBH     0044H     UNIT         ?PR?KEY?JSQ
+            CODE    011FH     0022H     UNIT         ?PR?_DELAYMS?JSQ
+            CODE    0141H     0022H     UNIT         ?C?LIB_CODE
+            CODE    0163H     000AH     UNIT         ?CO?JSQ
+            CODE    016DH     0008H     UNIT         ?PR?MAIN?JSQ
+            CODE    0175H     0004H     UNIT         ?C_INITSEG
+
+
+
+OVERLAY MAP OF MODULE:   jsq (JSQ)
+
+
+SEGMENT
+  +--> CALLED SEGMENT
+---------------------
+?C_C51STARTUP
+  +--> ?PR?MAIN?JSQ
+  +--> ?C_INITSEG
+
+?PR?MAIN?JSQ
+  +--> ?PR?KEY?JSQ
+  +--> ?PR?DISPLAY?JSQ
+
+?PR?KEY?JSQ
+  +--> ?PR?_DELAYMS?JSQ
+
+?PR?DISPLAY?JSQ
+  +--> ?CO?JSQ
+  +--> ?PR?_DELAYMS?JSQ
+BL51 BANKED LINKER/LOCATER V6.22                                                      06/06/2019  10:40:17  PAGE 2
+
+
+
+
+
+SYMBOL TABLE OF MODULE:  jsq (JSQ)
+
+  VALUE           TYPE          NAME
+  ----------------------------------
+
+  -------         MODULE        JSQ
+  C:0000H         SYMBOL        _ICE_DUMMY_
+  D:0080H         PUBLIC        P0
+  D:0090H         PUBLIC        P1
+  D:00A0H         PUBLIC        P2
+  C:0163H         PUBLIC        table
+  B:0090H.0       PUBLIC        k1
+  B:0090H.1       PUBLIC        k2
+  B:0090H.2       PUBLIC        k3
+  C:016DH         PUBLIC        main
+  C:00DBH         PUBLIC        key
+  D:0008H         PUBLIC        m
+  C:0123H         PUBLIC        _delayms
+  C:008FH         PUBLIC        display
+  C:011FH         SYMBOL        L?0030
+  -------         PROC          L?0029
+  -------         ENDPROC       L?0029
+  C:011FH         SYMBOL        L?0030
+  -------         PROC          _DELAYMS
+  D:0006H         SYMBOL        xms
+  -------         DO            
+  D:0006H         SYMBOL        i
+  D:0004H         SYMBOL        j
+  -------         ENDDO         
+  C:0123H         LINE#         106
+  C:0123H         LINE#         107
+  C:0123H         LINE#         109
+  C:012CH         LINE#         110
+  C:0140H         LINE#         111
+  -------         ENDPROC       _DELAYMS
+  -------         PROC          DISPLAY
+  C:008FH         LINE#         113
+  C:008FH         LINE#         114
+  C:008FH         LINE#         115
+  C:0092H         LINE#         116
+  C:00AFH         LINE#         117
+  C:00B6H         LINE#         118
+  C:00B9H         LINE#         119
+  C:00D4H         LINE#         120
+  -------         ENDPROC       DISPLAY
+  -------         PROC          KEY
+  C:00DBH         LINE#         123
+  C:00DBH         LINE#         124
+  C:00DBH         LINE#         125
+  C:00DEH         LINE#         126
+  C:00DEH         LINE#         127
+  C:00E1H         LINE#         128
+  C:00E4H         LINE#         129
+  C:00E4H         LINE#         130
+BL51 BANKED LINKER/LOCATER V6.22                                                      06/06/2019  10:40:17  PAGE 3
+
+
+  C:00E6H         LINE#         131
+  C:00EFH         LINE#         132
+  C:00EFH         LINE#         133
+  C:00F2H         LINE#         134
+  C:00F2H         LINE#         135
+  C:00F2H         LINE#         136
+  C:00F5H         LINE#         137
+  C:00F5H         LINE#         139
+  C:00F8H         LINE#         140
+  C:00F8H         LINE#         141
+  C:00FBH         LINE#         142
+  C:00FEH         LINE#         143
+  C:00FEH         LINE#         144
+  C:0100H         LINE#         145
+  C:0109H         LINE#         146
+  C:0109H         LINE#         147
+  C:010CH         LINE#         148
+  C:010CH         LINE#         149
+  C:010CH         LINE#         150
+  C:010FH         LINE#         151
+  C:010FH         LINE#         153
+  C:0112H         LINE#         154
+  C:0112H         LINE#         155
+  C:0115H         LINE#         156
+  C:0118H         LINE#         157
+  C:0118H         LINE#         158
+  C:011BH         LINE#         159
+  C:011BH         LINE#         160
+  C:011EH         LINE#         161
+  C:011EH         LINE#         162
+  -------         ENDPROC       KEY
+  -------         PROC          MAIN
+  C:016DH         LINE#         164
+  C:016DH         LINE#         165
+  C:016DH         LINE#         166
+  C:016DH         LINE#         167
+  C:016DH         LINE#         168
+  C:0170H         LINE#         169
+  C:0173H         LINE#         170
+  -------         ENDPROC       MAIN
+  -------         ENDMOD        JSQ
+
+  -------         MODULE        ?C?SCDIV
+  C:0141H         PUBLIC        ?C?SCDIV
+  -------         ENDMOD        ?C?SCDIV
+
+Program Size: data=10.0 xdata=0 code=377
+LINK/LOCATE RUN COMPLETE.  0 WARNING(S),  0 ERROR(S)

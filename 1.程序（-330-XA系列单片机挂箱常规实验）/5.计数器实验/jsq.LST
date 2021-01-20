@@ -1,0 +1,201 @@
+C51 COMPILER V9.52.0.0   JSQ                                                               06/06/2019 10:40:17 PAGE 1   
+
+
+C51 COMPILER V9.52.0.0, COMPILATION OF MODULE JSQ
+OBJECT MODULE PLACED IN jsq.OBJ
+COMPILER INVOKED BY: E:\Keil\C51\BIN\C51.EXE jsq.c BROWSE DEBUG OBJECTEXTEND TABS(2)
+
+line level    source
+
+   1          #include <reg51.h>
+   2          #define uchar unsigned char
+   3          #define uint unsigned int
+   4          
+   5          sbit k1 = P1^0;                 
+   6          sbit k2 = P1^1;                   
+   7          sbit k3 = P1^2;                  
+   8          void key(void);
+   9          void display(void);
+  10          
+  11          uchar code table[]={0xc0,0xf9,0xa4,0xb0,0x99,
+  12                              0x92,0x82,0xf8,0x80,0x90};          
+  13                                  
+  14          /*---------------------------------------
+  15          char m=00,n=00;    
+  16          
+  17          void delayms(uint xms)
+  18          {
+  19             uint i,j;
+  20             for(i=xms;i>0;i--)
+  21             for(j=110;j>0;j--);
+  22          }
+  23          
+  24          void display(void)
+  25          {
+  26                  P2=0X80;
+  27                          P0=table[m%10];   
+  28                          delayms(5);  
+  29                  P2=0X40; 
+  30                          P0=table[m/10];          
+  31                          delayms(5);                                                              
+  32                  P2=0X20;
+  33                          P0=table[n%10];         
+  34                          delayms(5); 
+  35                  P2=0X10;
+  36                          P0=table[n/10];         
+  37                          delayms(5); 
+  38          }
+  39          
+  40          void key()
+  41          {
+  42            if(k1==0)                                        
+  43             {                                                
+  44                     delayms(10);                         
+  45                  if(k1==0)                                 
+  46                  {
+  47                    m++;                                        
+  48                    if(m>=100)                         
+  49                    {
+  50                            n++;                               
+  51                          m=0;                               
+  52                          if(n>=100)                        
+  53                          {
+  54                            m=99;                                 
+  55                            n=99;
+C51 COMPILER V9.52.0.0   JSQ                                                               06/06/2019 10:40:17 PAGE 2   
+
+  56                          }
+  57                    }
+  58                  }
+  59                  while(!k1);                                
+  60             }
+  61          
+  62            if(k2==0)                                        
+  63             {                                               
+  64                     delayms(10);                         
+  65                  if(k2==0)
+  66                  {                                               
+  67                    m--;
+  68                    if(m<=0)                                 
+  69                    {                                                 
+  70                      m=99;                                
+  71                            n--;                                 
+  72                          if(n==-1)                        
+  73                          {
+  74                           n=0;                                 
+  75                           m=0;
+  76                          }
+  77                    }
+  78                  }
+  79                  while(!k2);                                
+  80             }
+  81          
+  82           if(k3==0)                                        
+  83           {
+  84             delayms(10);                                
+  85             if(k3==0)                                 
+  86             {
+  87                      m=0;                                        
+  88                   n=0;
+  89             }
+  90             while(!k3);                                
+  91           }
+  92          }
+  93          
+  94          void main()
+  95          { 
+  96            while(1)
+  97            {                                                         
+  98             key();                                        
+  99             display(); 
+ 100            }
+ 101          
+ 102          }                                   
+ 103          ---------------------------------*/
+ 104          char m=00;    
+ 105          
+ 106          void delayms(uint xms)
+ 107          {
+ 108   1         uint i,j;
+ 109   1         for(i=xms;i>0;i--)
+ 110   1         for(j=110;j>0;j--);
+ 111   1      }
+ 112          
+ 113          void display(void)
+ 114          {
+ 115   1              P2=0X02;
+ 116   1                      P0=table[m%10];   
+ 117   1                      delayms(5);  
+C51 COMPILER V9.52.0.0   JSQ                                                               06/06/2019 10:40:17 PAGE 3   
+
+ 118   1              P2=0X01; 
+ 119   1                      P0=table[m/10];          
+ 120   1                      delayms(5);                                                               
+ 121   1      }
+ 122          
+ 123          void key()
+ 124          {
+ 125   1        if(k1==0)                                        
+ 126   1         {                                                
+ 127   2                 delayms(10);                         
+ 128   2              if(k1==0)                                 
+ 129   2              {
+ 130   3                m++;                                        
+ 131   3                if(m>=100)                         
+ 132   3                {                               
+ 133   4                      m=00;                               
+ 134   4                }
+ 135   3              }
+ 136   2              while(!k1);                                
+ 137   2         }
+ 138   1      
+ 139   1        if(k2==0)                                        
+ 140   1         {                                               
+ 141   2                 delayms(10);                         
+ 142   2              if(k2==0)
+ 143   2              {                                               
+ 144   3                m--;
+ 145   3                if(m<=0)                                 
+ 146   3                {                                                 
+ 147   4                  m=99;                                                                
+ 148   4                }
+ 149   3              }
+ 150   2              while(!k2);                                
+ 151   2         }
+ 152   1      
+ 153   1       if(k3==0)                                        
+ 154   1       {
+ 155   2         delayms(10);                                
+ 156   2         if(k3==0)                                 
+ 157   2         {
+ 158   3                  m=0;                                        
+ 159   3         }
+ 160   2         while(!k3);                                
+ 161   2       }
+ 162   1      }
+ 163          
+ 164          void main()
+ 165          { 
+ 166   1        while(1)
+ 167   1        {                                                         
+ 168   2         key();                                        
+ 169   2         display(); 
+ 170   2        }
+ 171   1      
+ 172   1      }  
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    186    ----
+   CONSTANT SIZE    =     10    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+C51 COMPILER V9.52.0.0   JSQ                                                               06/06/2019 10:40:17 PAGE 4   
+
+   DATA SIZE        =      1    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

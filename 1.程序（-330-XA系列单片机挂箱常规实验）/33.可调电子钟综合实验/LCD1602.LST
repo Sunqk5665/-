@@ -1,0 +1,118 @@
+C51 COMPILER V9.52.0.0   LCD1602                                                           10/24/2019 14:38:58 PAGE 1   
+
+
+C51 COMPILER V9.52.0.0, COMPILATION OF MODULE LCD1602
+OBJECT MODULE PLACED IN LCD1602.OBJ
+COMPILER INVOKED BY: E:\Keil4\C51\BIN\C51.EXE LCD1602.c BROWSE DEBUG OBJECTEXTEND TABS(2)
+
+line level    source
+
+   1          #include <LCD1602.h>
+   2          
+   3          
+   4          
+   5          void LCD_Read_BF(void)
+   6          {
+   7   1        unsigned char read=0; 
+   8   1      
+   9   1        //-------------------------------
+  10   1        //增加读忙超时处理，万一LCD故障，程序可以跳出
+  11   1        //另外，亦可使用看门狗，如果跳不出去就等狗复位
+  12   1        unsigned int temp=10000;
+  13   1        //-------------------------------
+  14   1        
+  15   1        LCD1602_RS = LOW;   //RS 0
+  16   1        LCD1602_RW = HIGH;    //RW 1
+  17   1        LCD1602_EN = HIGH;    //EN 1  Read BF
+  18   1        
+  19   1        LCDIO = 0xFF;
+  20   1        LCDIO = 0xFF;
+  21   1        do{
+  22   2          read = LCDIO;
+  23   2          //-----------我增加的代码--------------------
+  24   2          if(--temp==0)
+  25   2            return;
+  26   2          //---------------------------------------------
+  27   2        }while(read&MSB);
+  28   1      }
+  29          //*************************************
+  30          void LCD_en_com(unsigned char command)
+  31          {
+  32   1        LCD_Read_BF(); 
+  33   1        
+  34   1        LCD1602_RS = LOW;   
+  35   1        LCD1602_RW = LOW;   
+  36   1        
+  37   1        LCD1602_EN = HIGH;  
+  38   1        LCDIO = command;
+  39   1        LCD1602_EN = LOW;
+  40   1      }
+  41          //*********************************
+  42          void LCD_en_dat(unsigned char dat)
+  43          {
+  44   1        LCD_Read_BF();
+  45   1        
+  46   1        LCD1602_RS = HIGH; 
+  47   1        LCD1602_RW = LOW;   
+  48   1        
+  49   1        LCD1602_EN = HIGH;
+  50   1        LCDIO = dat;
+  51   1        LCD1602_EN = LOW;
+  52   1      }
+  53          //**********************************************
+  54          void LCD_set_xy(unsigned char x,unsigned char y)
+  55          {
+C51 COMPILER V9.52.0.0   LCD1602                                                           10/24/2019 14:38:58 PAGE 2   
+
+  56   1        unsigned char address;
+  57   1        if(x == LINE1)  
+  58   1          address = LINE1_HEAD + y;
+  59   1        else      
+  60   1          address = LINE2_HEAD + y;
+  61   1        LCD_en_com(address);     
+  62   1      }
+  63          //**********************************************
+  64          void LCD_write_char(unsigned x,unsigned char y,unsigned char dat)
+  65          {
+  66   1        LCD_set_xy(x,y); 
+  67   1        LCD_en_dat(dat);
+  68   1      }   
+  69          //**********************************************
+  70          void LCD_write_string(unsigned char x,unsigned char y,unsigned char *s)
+  71          {
+  72   1        LCD_set_xy(x,y); 
+  73   1        while(*s)  
+  74   1        {
+  75   2          LCDIO = *s;
+  76   2          LCD_en_dat(*s);   
+  77   2          s++;
+  78   2        }
+  79   1      }
+  80          //**********************************************
+  81          void LCD_init(void)
+  82          { 
+  83   1        LCD_en_com(DATA_MODE);
+  84   1          //set 8 bit data transmission mode 
+  85   1        LCD_en_com(OPEN_SCREEN);
+  86   1          //open display (enable lcd display)
+  87   1        LCD_en_com(DISPLAY_ADDRESS);
+  88   1          //set lcd first display address 
+  89   1        LCD_en_com(0x18);
+  90   1        CLEARSCREEN;
+  91   1          //clear screen
+  92   1      }
+  93          //**********************************************
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    157    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----       3
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

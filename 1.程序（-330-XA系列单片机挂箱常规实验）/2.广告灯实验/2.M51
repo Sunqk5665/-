@@ -1,0 +1,137 @@
+BL51 BANKED LINKER/LOCATER V6.22                                                        03/08/2017  17:31:29  PAGE 1
+
+
+BL51 BANKED LINKER/LOCATER V6.22, INVOKED BY:
+E:\KEIL4\C51\BIN\BL51.EXE pxh.obj TO 2 RAMSIZE (256)
+
+
+MEMORY MODEL: SMALL
+
+
+INPUT MODULES INCLUDED:
+  pxh.obj (PXH)
+  E:\KEIL4\C51\LIB\C51S.LIB (?C_STARTUP)
+  E:\KEIL4\C51\LIB\C51S.LIB (?C_INIT)
+
+
+LINK MAP OF MODULE:  2 (PXH)
+
+
+            TYPE    BASE      LENGTH    RELOCATION   SEGMENT NAME
+            -----------------------------------------------------
+
+            * * * * * * *   D A T A   M E M O R Y   * * * * * * *
+            REG     0000H     0008H     ABSOLUTE     "REG BANK 0"
+            DATA    0008H     000CH     UNIT         ?DT?PXH
+            DATA    0014H     0001H     UNIT         _DATA_GROUP_
+            IDATA   0015H     0001H     UNIT         ?STACK
+
+            * * * * * * *   C O D E   M E M O R Y   * * * * * * *
+            CODE    0000H     0003H     ABSOLUTE     
+            CODE    0003H     008CH     UNIT         ?C_C51STARTUP
+            CODE    008FH     0077H     UNIT         ?PR?MAIN?PXH
+            CODE    0106H     001FH     UNIT         ?PR?_DELAY?PXH
+            CODE    0125H     000FH     UNIT         ?C_INITSEG
+
+
+
+OVERLAY MAP OF MODULE:   2 (PXH)
+
+
+SEGMENT                          DATA_GROUP 
+  +--> CALLED SEGMENT          START    LENGTH
+----------------------------------------------
+?C_C51STARTUP                  -----    -----
+  +--> ?PR?MAIN?PXH
+  +--> ?C_INITSEG
+
+?PR?MAIN?PXH                   0014H    0001H
+  +--> ?PR?_DELAY?PXH
+
+
+
+SYMBOL TABLE OF MODULE:  2 (PXH)
+
+  VALUE           TYPE          NAME
+  ----------------------------------
+
+  -------         MODULE        PXH
+  C:0000H         SYMBOL        _ICE_DUMMY_
+  D:0090H         PUBLIC        P1
+  D:00B0H         PUBLIC        P3
+BL51 BANKED LINKER/LOCATER V6.22                                                      03/08/2017  17:31:29  PAGE 2
+
+
+  D:00A8H         PUBLIC        IE
+  C:0110H         PUBLIC        _delay
+  D:00B8H         PUBLIC        IP
+  C:008FH         PUBLIC        main
+  D:0098H         PUBLIC        SCON
+  D:0088H         PUBLIC        TCON
+  D:0008H         PUBLIC        tab
+  D:00C8H         PUBLIC        T2CON
+  D:00D0H         PUBLIC        PSW
+  -------         PROC          MAIN
+  -------         DO            
+  D:0014H         SYMBOL        i
+  -------         ENDDO         
+  C:008FH         LINE#         12
+  C:008FH         LINE#         13
+  C:008FH         LINE#         15
+  C:008FH         LINE#         16
+  C:008FH         LINE#         17
+  C:0092H         LINE#         18
+  C:0092H         LINE#         19
+  C:0092H         LINE#         20
+  C:0095H         LINE#         21
+  C:009AH         LINE#         23
+  C:00A3H         LINE#         24
+  C:00A6H         LINE#         25
+  C:00A6H         LINE#         26
+  C:00ADH         LINE#         27
+  C:00B0H         LINE#         28
+  C:00B5H         LINE#         30
+  C:00BEH         LINE#         31
+  C:00C1H         LINE#         32
+  C:00C1H         LINE#         33
+  C:00C1H         LINE#         34
+  C:00C4H         LINE#         35
+  C:00C9H         LINE#         36
+  C:00CEH         LINE#         37
+  C:00D3H         LINE#         38
+  C:00D8H         LINE#         40
+  C:00E1H         LINE#         41
+  C:00EBH         LINE#         42
+  C:00EBH         LINE#         43
+  C:00EBH         LINE#         44
+  C:00EEH         LINE#         45
+  C:00F3H         LINE#         46
+  C:00F8H         LINE#         47
+  C:00FDH         LINE#         48
+  C:0102H         LINE#         49
+  -------         ENDPROC       MAIN
+  C:0106H         SYMBOL        L?0025
+  C:010AH         SYMBOL        L?0026
+  -------         PROC          L?0024
+  -------         ENDPROC       L?0024
+  C:0106H         SYMBOL        L?0025
+  C:010AH         SYMBOL        L?0026
+  -------         PROC          _DELAY
+  D:0006H         SYMBOL        t
+  -------         DO            
+BL51 BANKED LINKER/LOCATER V6.22                                                      03/08/2017  17:31:29  PAGE 3
+
+
+  D:0005H         SYMBOL        j
+  D:0006H         SYMBOL        i
+  -------         ENDDO         
+  C:0110H         LINE#         54
+  C:0110H         LINE#         55
+  C:0110H         LINE#         58
+  C:0119H         LINE#         59
+  C:0124H         LINE#         60
+  -------         ENDPROC       _DELAY
+  -------         ENDMOD        PXH
+
+Program Size: data=22.0 xdata=0 code=308
+LINK/LOCATE RUN COMPLETE.  0 WARNING(S),  0 ERROR(S)

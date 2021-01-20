@@ -1,0 +1,99 @@
+C51 COMPILER V9.52.0.0   WARN                                                              10/31/2019 10:20:31 PAGE 1   
+
+
+C51 COMPILER V9.52.0.0, COMPILATION OF MODULE WARN
+OBJECT MODULE PLACED IN warn.OBJ
+COMPILER INVOKED BY: E:\Keil4\C51\BIN\C51.EXE warn.c BROWSE DEBUG OBJECTEXTEND TABS(2)
+
+line level    source
+
+   1          #include<reg52.H>   //包含51单片机寄存器定义的头文件
+   2          sbit S=P3^2;      //将S位定义为P3.2，
+   3          sbit cruise=P2^0;      //将cruise位定义为P1.0，接LED状态指示
+   4          sbit buzzer=P1^1;      //将buzzer位定义为P1.1，接蜂鸣器状态指示
+   5          /*******************************************
+   6          函数声明
+   7          ******************************************/ 
+   8          void Time_init(void);
+   9          void delay5s(void);
+  10          int  time_count=0,i=0;
+  11          int  buzzer_flag=0;// 标志位
+  12          /******************************************
+  13          函数功能：主函数
+  14          ******************************************/ 
+  15          void main(void)
+  16           {
+  17   1         Time_init();
+  18   1      //   EA=1;                  //开总中断
+  19   1         EX0=1;  //允许使用外中断
+  20   1         IT0=1;  //选择负跳变来触发外中断  
+  21   1         while(1)
+  22   1         {
+  23   2         if(buzzer_flag==1)
+  24   2         {  
+  25   3            delay5s();      
+  26   3            buzzer=1;
+  27   3            cruise=1;
+  28   3            buzzer_flag=0;
+  29   3            TR1=1;
+  30   3         }
+  31   2          } ;            
+  32   1       }
+  33          /**************************************************************
+  34          函数功能：外中断T0的中断服务程序
+  35          **************************************************************/
+  36          void int0(void) interrupt 0 using 0  //外中断0的中断编号为0
+  37          { 
+  38   1        TR1=0;
+  39   1        cruise=1;
+  40   1        buzzer=0;
+  41   1        buzzer_flag=1;
+  42   1       }
+  43          void Time_init(void)//定时器初始化
+  44          { 
+  45   1        EA=1;                  //开总中断
+  46   1        ET1=1;                 //定时器T1中断允许         
+  47   1        TMOD=0x10;             //使用定时器T1的模式1
+  48   1        TH1=(65536-46083)/256; //定时器T1的高8位赋初值  50ms定时初值
+  49   1        TL1=(65536-46083)%256; //定时器T1的高8位赋初值
+  50   1        TR1=1;                 //启动定时器T1
+  51   1        buzzer=1;              //初始化蜂鸣器
+  52   1        cruise=1;
+  53   1      }
+  54          void Time1(void) interrupt 3 using 0  //实现一秒定时
+  55                           //“interrupt”声明函数为中断服务函数
+C51 COMPILER V9.52.0.0   WARN                                                              10/31/2019 10:20:31 PAGE 2   
+
+  56                           //其后的3为定时器T1的中断编号；0表示使用第0组工作寄存器 
+  57           {
+  58   1           time_count++;
+  59   1         if(time_count>10)
+  60   1         {
+  61   2           cruise=~cruise;
+  62   2           time_count=0;
+  63   2         }
+  64   1          TH1=(65536-46083)/256; //定时器T1的高8位重新赋初值
+  65   1          TL1=(65536-46083)%256; //定时器T1的高8位重新赋初值
+  66   1       }
+  67           
+  68          void delay5s(void)   
+  69          {
+  70   1          unsigned char a,b,c;
+  71   1          for(c=155;c>0;c--)
+  72   1              for(b=178;b>0;b--)
+  73   1                  for(a=82;a>0;a--);
+  74   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    119    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =      6    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

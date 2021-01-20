@@ -1,0 +1,65 @@
+C51 COMPILER V9.52.0.0   PXH                                                               06/10/2019 14:32:39 PAGE 1   
+
+
+C51 COMPILER V9.52.0.0, COMPILATION OF MODULE PXH
+OBJECT MODULE PLACED IN pxh.OBJ
+COMPILER INVOKED BY: E:\Keil\C51\BIN\C51.EXE pxh.c BROWSE DEBUG OBJECTEXTEND TABS(2)
+
+line level    source
+
+   1          #include<reg52.h>
+   2          
+   3          sbit CS =P1^0;
+   4          sbit SCK=P1^1;
+   5          sbit DIN=P1^2;
+   6          
+   7          void TLC5615(unsigned int dat)
+   8          {
+   9   1        unsigned char i;
+  10   1        CS=1;
+  11   1        SCK=0;
+  12   1        DIN=0;
+  13   1        CS=0;
+  14   1        dat=dat<<6;
+  15   1        for(i=0;i<12;i++)
+  16   1        {
+  17   2          DIN=dat&0x8000;
+  18   2          SCK=1;
+  19   2          dat=dat<<1;
+  20   2          SCK=0;
+  21   2        }
+  22   1        CS=1;
+  23   1      }
+  24          
+  25          void main(void)
+  26          {
+  27   1        unsigned int V_dat=0;
+  28   1        unsigned char i;
+  29   1        while(1)
+  30   1        {
+  31   2          if(V_dat<0x201)
+  32   2            V_dat+=1;
+  33   2          else
+  34   2            V_dat=0;
+  35   2          TLC5615(V_dat);
+  36   2          i=100;
+  37   2          while(i--);
+  38   2        }
+  39   1      }
+  40          
+  41          
+  42          
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =     82    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

@@ -1,0 +1,4 @@
+"STARTUP.obj",
+"resp.obj" 
+TO "respond" 
+RAMSIZE(256) 

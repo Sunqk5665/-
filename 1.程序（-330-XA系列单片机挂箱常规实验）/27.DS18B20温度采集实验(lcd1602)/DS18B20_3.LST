@@ -1,0 +1,1010 @@
+C51 COMPILER V9.59.0.0   DS18B20_3                                                         05/21/2017 09:23:06 PAGE 1   
+
+
+C51 COMPILER V9.59.0.0, COMPILATION OF MODULE DS18B20_3
+OBJECT MODULE PLACED IN DS18B20_3.OBJ
+COMPILER INVOKED BY: C:\Keil_v5\C51\BIN\C51.EXE DS18B20_3.c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND CODE LISTINCLUDE
+                    - SYMBOLS TABS(2)
+
+line level    source
+
+   1          /*-----------------------------------------*/
+   2          #include<REG52.H>
+   1      =1  /*--------------------------------------------------------------------------
+   2      =1  REG52.H
+   3      =1  
+   4      =1  Header file for generic 80C52 and 80C32 microcontroller.
+   5      =1  Copyright (c) 1988-2002 Keil Elektronik GmbH and Keil Software, Inc.
+   6      =1  All rights reserved.
+   7      =1  --------------------------------------------------------------------------*/
+   8      =1  
+   9      =1  #ifndef __REG52_H__
+  10      =1  #define __REG52_H__
+  11      =1  
+  12      =1  /*  BYTE Registers  */
+  13      =1  sfr P0    = 0x80;
+  14      =1  sfr P1    = 0x90;
+  15      =1  sfr P2    = 0xA0;
+  16      =1  sfr P3    = 0xB0;
+  17      =1  sfr PSW   = 0xD0;
+  18      =1  sfr ACC   = 0xE0;
+  19      =1  sfr B     = 0xF0;
+  20      =1  sfr SP    = 0x81;
+  21      =1  sfr DPL   = 0x82;
+  22      =1  sfr DPH   = 0x83;
+  23      =1  sfr PCON  = 0x87;
+  24      =1  sfr TCON  = 0x88;
+  25      =1  sfr TMOD  = 0x89;
+  26      =1  sfr TL0   = 0x8A;
+  27      =1  sfr TL1   = 0x8B;
+  28      =1  sfr TH0   = 0x8C;
+  29      =1  sfr TH1   = 0x8D;
+  30      =1  sfr IE    = 0xA8;
+  31      =1  sfr IP    = 0xB8;
+  32      =1  sfr SCON  = 0x98;
+  33      =1  sfr SBUF  = 0x99;
+  34      =1  
+  35      =1  /*  8052 Extensions  */
+  36      =1  sfr T2CON  = 0xC8;
+  37      =1  sfr RCAP2L = 0xCA;
+  38      =1  sfr RCAP2H = 0xCB;
+  39      =1  sfr TL2    = 0xCC;
+  40      =1  sfr TH2    = 0xCD;
+  41      =1  
+  42      =1  
+  43      =1  /*  BIT Registers  */
+  44      =1  /*  PSW  */
+  45      =1  sbit CY    = PSW^7;
+  46      =1  sbit AC    = PSW^6;
+  47      =1  sbit F0    = PSW^5;
+  48      =1  sbit RS1   = PSW^4;
+  49      =1  sbit RS0   = PSW^3;
+  50      =1  sbit OV    = PSW^2;
+  51      =1  sbit P     = PSW^0; //8052 only
+  52      =1  
+C51 COMPILER V9.59.0.0   DS18B20_3                                                         05/21/2017 09:23:06 PAGE 2   
+
+  53      =1  /*  TCON  */
+  54      =1  sbit TF1   = TCON^7;
+  55      =1  sbit TR1   = TCON^6;
+  56      =1  sbit TF0   = TCON^5;
+  57      =1  sbit TR0   = TCON^4;
+  58      =1  sbit IE1   = TCON^3;
+  59      =1  sbit IT1   = TCON^2;
+  60      =1  sbit IE0   = TCON^1;
+  61      =1  sbit IT0   = TCON^0;
+  62      =1  
+  63      =1  /*  IE  */
+  64      =1  sbit EA    = IE^7;
+  65      =1  sbit ET2   = IE^5; //8052 only
+  66      =1  sbit ES    = IE^4;
+  67      =1  sbit ET1   = IE^3;
+  68      =1  sbit EX1   = IE^2;
+  69      =1  sbit ET0   = IE^1;
+  70      =1  sbit EX0   = IE^0;
+  71      =1  
+  72      =1  /*  IP  */
+  73      =1  sbit PT2   = IP^5;
+  74      =1  sbit PS    = IP^4;
+  75      =1  sbit PT1   = IP^3;
+  76      =1  sbit PX1   = IP^2;
+  77      =1  sbit PT0   = IP^1;
+  78      =1  sbit PX0   = IP^0;
+  79      =1  
+  80      =1  /*  P3  */
+  81      =1  sbit RD    = P3^7;
+  82      =1  sbit WR    = P3^6;
+  83      =1  sbit T1    = P3^5;
+  84      =1  sbit T0    = P3^4;
+  85      =1  sbit INT1  = P3^3;
+  86      =1  sbit INT0  = P3^2;
+  87      =1  sbit TXD   = P3^1;
+  88      =1  sbit RXD   = P3^0;
+  89      =1  
+  90      =1  /*  SCON  */
+  91      =1  sbit SM0   = SCON^7;
+  92      =1  sbit SM1   = SCON^6;
+  93      =1  sbit SM2   = SCON^5;
+  94      =1  sbit REN   = SCON^4;
+  95      =1  sbit TB8   = SCON^3;
+  96      =1  sbit RB8   = SCON^2;
+  97      =1  sbit TI    = SCON^1;
+  98      =1  sbit RI    = SCON^0;
+  99      =1  
+ 100      =1  /*  P1  */
+ 101      =1  sbit T2EX  = P1^1; // 8052 only
+ 102      =1  sbit T2    = P1^0; // 8052 only
+ 103      =1               
+ 104      =1  /*  T2CON  */
+ 105      =1  sbit TF2    = T2CON^7;
+ 106      =1  sbit EXF2   = T2CON^6;
+ 107      =1  sbit RCLK   = T2CON^5;
+ 108      =1  sbit TCLK   = T2CON^4;
+ 109      =1  sbit EXEN2  = T2CON^3;
+ 110      =1  sbit TR2    = T2CON^2;
+ 111      =1  sbit C_T2   = T2CON^1;
+ 112      =1  sbit CP_RL2 = T2CON^0;
+ 113      =1  
+ 114      =1  #endif
+C51 COMPILER V9.59.0.0   DS18B20_3                                                         05/21/2017 09:23:06 PAGE 3   
+
+   3          #include"LCD1602_8.H"
+   1      =1  /*------------------------------------------------------------------------------*/
+   2      =1  #ifndef __LCD1602_8_H__
+   3      =1  #define __LCD1602_8_H__
+   4      =1  #include<intrins.h>
+   1      =2  /*--------------------------------------------------------------------------
+   2      =2  INTRINS.H
+   3      =2  
+   4      =2  Intrinsic functions for C51.
+   5      =2  Copyright (c) 1988-2010 Keil Elektronik GmbH and ARM Germany GmbH
+   6      =2  All rights reserved.
+   7      =2  --------------------------------------------------------------------------*/
+   8      =2  
+   9      =2  #ifndef __INTRINS_H__
+  10      =2  #define __INTRINS_H__
+  11      =2  
+  12      =2  #pragma SAVE
+  13      =2  
+  14      =2  #if defined (__CX2__)
+           =2 #pragma FUNCTIONS(STATIC)
+           =2 /* intrinsic functions are reentrant, but need static attribute */
+           =2 #endif
+  18      =2  
+  19      =2  extern void          _nop_     (void);
+  20      =2  extern bit           _testbit_ (bit);
+  21      =2  extern unsigned char _cror_    (unsigned char, unsigned char);
+  22      =2  extern unsigned int  _iror_    (unsigned int,  unsigned char);
+  23      =2  extern unsigned long _lror_    (unsigned long, unsigned char);
+  24      =2  extern unsigned char _crol_    (unsigned char, unsigned char);
+  25      =2  extern unsigned int  _irol_    (unsigned int,  unsigned char);
+  26      =2  extern unsigned long _lrol_    (unsigned long, unsigned char);
+  27      =2  extern unsigned char _chkfloat_(float);
+  28      =2  #if defined (__CX2__)
+           =2 extern int           abs       (int);
+           =2 extern void          _illop_   (void);
+           =2 #endif
+  32      =2  #if !defined (__CX2__)
+  33      =2  extern void          _push_    (unsigned char _sfr);
+  34      =2  extern void          _pop_     (unsigned char _sfr);
+  35      =2  #endif
+  36      =2  
+  37      =2  #pragma RESTORE
+  38      =2  
+  39      =2  #endif
+  40      =2  
+   5      =1  
+   6      =1  
+   7      =1  
+   8      =1  
+   9      =1  /*------------------------------------------------------------------------------*/
+  10      =1  //LCD接口定义         
+  11      =1  sfr    io = 0x80;       //P0-0x80,P1-0x90,P2-0xA0,P3-0xB0;
+  12      =1  sbit   rs = P2^2;       //LCD数据/命令选择端(H/L)
+  13      =1  sbit   rw = P2^1;       //LCD读/写选择端(H/L)
+  14      =1  sbit   ep = P2^0;       //LCD使能控制
+  15      =1  sbit     bz = io^7;       //LCD忙标志位
+  16      =1  
+  17      =1  
+  18      =1  
+  19      =1  
+  20      =1  
+  21      =1  /*------------------------------------------------------------------------------*/
+C51 COMPILER V9.59.0.0   DS18B20_3                                                         05/21/2017 09:23:06 PAGE 4   
+
+  22      =1  //函数声明    
+  23      =1  void lcd_busy(void);          //测试LCD忙碌状态程序
+  24      =1  void lcd_wcmd(unsigned char cmd);   //写入指令到LCD程序
+  25      =1  void lcd_wdat(unsigned char dat);   //写入数据到LCD程序
+  26      =1  void lcd_pos (unsigned char x, bit y);  //LCD数据指针位置程序
+  27      =1  //void printc(unsigned char CHAR);    //显示字符
+  28      =1  void prints(unsigned char *string);   //显示字符串
+  29      =1  void lcd_init(void);          //LCD初始化设定程序
+  30      =1  
+  31      =1  
+  32      =1  
+  33      =1  /*------------------------------------------------------------------------------*/
+  34      =1  //测试LCD忙碌状态
+  35      =1  void lcd_busy(void)
+  36      =1  { 
+  37   1  =1    do{
+  38   2  =1      ep = 0;
+  39   2  =1      rs = 0;   //指令
+  40   2  =1      rw = 1;   //读出
+  41   2  =1      io = 0xff;
+  42   2  =1      ep = 1;
+  43   2  =1      _nop_();  //高电平读出  1us 
+  44   2  =1    }while(bz);   //bz=1表示忙,bz=0表示空闲
+  45   1  =1    ep = 0;   
+  46   1  =1  }
+  47      =1  
+  48      =1  
+  49      =1  
+  50      =1  
+  51      =1  /*------------------------------------------------------------------------------*/
+  52      =1  //写入指令到LCD
+  53      =1  void lcd_wcmd(unsigned char cmd)
+  54      =1  {             
+  55   1  =1    lcd_busy(); //检测忙
+  56   1  =1    rs = 0;   //指令
+  57   1  =1    rw = 0;   //写入
+  58   1  =1    ep = 1; 
+  59   1  =1    io = cmd; //指令
+  60   1  =1    ep = 0;   //下降沿有效  
+  61   1  =1  }
+  62      =1  
+  63      =1  
+  64      =1  
+  65      =1  
+  66      =1  /*------------------------------------------------------------------------------*/
+  67      =1  //写入数据函数
+  68      =1  void lcd_wdat(unsigned char Data)
+  69      =1  {
+  70   1  =1    lcd_busy();  //检测忙
+  71   1  =1    rs = 1;    //数据
+  72   1  =1    rw = 0;    //写入
+  73   1  =1    ep = 1;
+  74   1  =1    io = Data;   //数据
+  75   1  =1    ep = 0;    //下降沿有效
+  76   1  =1  }
+  77      =1  
+  78      =1  
+  79      =1  
+  80      =1  
+  81      =1  /*------------------------------------------------------------------------------*/
+  82      =1  //LCD数据指针位置程序
+  83      =1  void lcd_pos(unsigned char x, bit y)
+C51 COMPILER V9.59.0.0   DS18B20_3                                                         05/21/2017 09:23:06 PAGE 5   
+
+  84      =1  {           
+  85   1  =1    if(y)lcd_wcmd(x|0xc0);  //y=1,第二行显示;y=0,第一行显示   0<=x<16
+  86   1  =1    else lcd_wcmd(x|0x80);  //数据指针=80+地址码(00H~27H,40H~67H)
+  87   1  =1  }
+  88      =1  
+  89      =1  
+  90      =1  
+  91      =1  
+  92      =1  /*------------------------------------------------------------------------------*/
+  93      =1  //显示字符
+  94      =1  /*
+  95      =1  void printc(unsigned char CHAR)
+  96      =1  {
+  97      =1    lcd_wdat(CHAR);
+  98      =1  }
+  99      =1  */
+ 100      =1  
+ 101      =1  
+ 102      =1  
+ 103      =1  /*------------------------------------------------------------------------------*/
+ 104      =1  //显示字符串
+ 105      =1  void prints(unsigned char *string)
+ 106      =1  {
+ 107   1  =1    unsigned char i;
+ 108   1  =1    //do{lcd_wdat(string[i]);i++;}while(string[i]!='\0');//生成代码比for循环大
+ 109   1  =1    for(i=0;string[i]!='\0';i++)lcd_wdat(string[i]);   //有时用for循环也好哈
+ 110   1  =1  }
+ 111      =1  
+ 112      =1  
+ 113      =1  
+ 114      =1  
+ 115      =1  /*------------------------------------------------------------------------------*/
+ 116      =1  //LCD初始化设定
+ 117      =1  void lcd_init()
+ 118      =1  {           
+ 119   1  =1    lcd_wcmd(0x38);   //设置LCD为16X2显示,5X7点阵,八位数据接口
+ 120   1  =1    lcd_wcmd(0x06);   //LCD显示光标移动设置(光标地址指针加1,整屏显示不移动)
+ 121   1  =1    lcd_wcmd(0x0c);   //LCD开显示及光标设置(光标不闪烁,不显示"_")
+ 122   1  =1    lcd_wcmd(0x01);   //清除LCD的显示内容
+ 123   1  =1  }
+ 124      =1  
+ 125      =1  
+ 126      =1  #endif
+   4          #include"DS18B20_A.H"
+   1      =1  
+   2      =1  #ifndef __DS18B20_A_H__
+   3      =1  #define __DS18B20_A_H__
+   4      =1  
+   5      =1  sbit DQ = P1^7;         //数据接口定义
+   6      =1  unsigned char TempBuffer[6];  //温度数据字符
+   7      =1  bit  symbol = 0;          //温度数据正负号
+   8      =1  
+   9      =1  
+  10      =1  
+  11      =1  /*--------------------------------------------*/
+  12      =1  //函数声明
+  13      =1  bit Init_DS18B20(void);              //DS18B20初始化函数,如果bit=0则初始化成功,bit=1则初始化失败
+  14      =1  unsigned char ReadOneChar(void);     //DS18B20读出一个字节
+  15      =1  void WriteOneChar(unsigned char dat);//DS18B20写入一个字节
+  16      =1  unsigned char ReadTemp(void);    //读出DS18B20当前的温度
+  17      =1  void Temp_To_String(void);       //温度数据转化成液晶字符显示//函数返回值为TempBuffer
+  18      =1  
+C51 COMPILER V9.59.0.0   DS18B20_3                                                         05/21/2017 09:23:06 PAGE 6   
+
+  19      =1  
+  20      =1  
+  21      =1  /*--------------------------------------------*/
+  22      =1  //延迟时间函数
+  23      =1  void delay(unsigned char x, unsigned char y, unsigned char z)
+  24      =1  {
+  25   1  =1      unsigned char tempx,tempy,tempz=z;
+  26   1  =1      do{tempy=y;do{tempx=x;while(--tempx);}while(--tempy);}while(--tempz);
+  27   1  =1  }
+  28      =1  
+  29      =1  
+  30      =1  
+  31      =1  /*--------------------------------------------*/
+  32      =1  //DS18B20初始化函数
+  33      =1  bit Init_DS18B20(void)
+  34      =1  {
+  35   1  =1    bit Status=0;
+  36   1  =1    DQ=1;     //DS18B20复位
+  37   1  =1    //delay(1,1,1); //17us
+  38   1  =1    DQ=0;     //低电平复位
+  39   1  =1    delay(9,1,19);  //500us   //保持低电平大于480us
+  40   1  =1    DQ=1;     //释放总线
+  41   1  =1    delay(2,1,2); //30us    //延时15us~60us  准备接收数据
+  42   1  =1    Status=DQ;    //如果Status=0则初始化成功,Status=1则初始化失败
+  43   1  =1    delay(10,5,1);  //130us   //必要延迟时间
+  44   1  =1    return (Status);
+  45   1  =1  }
+  46      =1  
+  47      =1  
+  48      =1  
+  49      =1  /*--------------------------------------------*/
+  50      =1  //DS18B20读出一个字节
+  51      =1  unsigned char ReadOneChar(void)
+  52      =1  {
+  53   1  =1    unsigned char i=0;
+  54   1  =1    unsigned char dat=0;
+  55   1  =1    for(i=8;i>0;i--)
+  56   1  =1    {
+  57   2  =1      DQ=0;     //读出数据开始//_nop_();
+  58   2  =1      dat>>=1;    //由低到高位依次读出
+  59   2  =1      DQ=1;     //释放总线
+  60   2  =1      if(DQ)
+  61   2  =1        dat|=0x80;  //15us内必须完成读数据
+  62   2  =1      delay(4,5,1); //70us  //60us~120us释放总线
+  63   2  =1    }
+  64   1  =1    return (dat);
+  65   1  =1  }
+  66      =1  
+  67      =1  
+  68      =1  
+  69      =1  /*--------------------------------------------*/
+  70      =1  //DS18B20写入一个字节
+  71      =1  void WriteOneChar(unsigned char dat)
+  72      =1  { 
+  73   1  =1    unsigned char i=0;
+  74   1  =1    for(i=8;i>0;i--)
+  75   1  =1    {
+  76   2  =1      DQ=0;     //写开始
+  77   2  =1      DQ=dat&0x01;  //由低到高依次写入
+  78   2  =1      delay(3,5,1); //60us  //写入数据时间间隙为:至少60us连续写2位间的间隙应大于1us
+  79   2  =1      DQ=1;     //释放总线  
+  80   2  =1      dat>>=1;
+C51 COMPILER V9.59.0.0   DS18B20_3                                                         05/21/2017 09:23:06 PAGE 7   
+
+  81   2  =1    }
+  82   1  =1  }
+  83      =1  
+  84      =1  
+  85      =1  
+  86      =1  /*--------------------------------------------*/
+  87      =1  //读出DS18B20当前的温度
+  88      =1  unsigned char ReadTemp(void)
+  89      =1  {
+  90   1  =1    unsigned char TempL=0;
+  91   1  =1    unsigned char TempH=0;
+  92   1  =1    unsigned char Temp_Value; 
+  93   1  =1  
+  94   1  =1  
+  95   1  =1    Init_DS18B20();     //先复位,再写ROM,最后写RAM
+  96   1  =1    WriteOneChar(0xcc);   //跳过读出序列号的操作
+  97   1  =1    WriteOneChar(0x44);   //启动温度转换,默认的【12Bits】转化
+  98   1  =1    delay(217,94,17);   //700ms //12Bits转换时间750ms
+  99   1  =1  
+ 100   1  =1    Init_DS18B20();     //先复位,再写ROM,最后写RAM
+ 101   1  =1    WriteOneChar(0xcc);   //跳过读出序列号的操作
+ 102   1  =1    WriteOneChar(0xbe);   //读出温度寄存器
+ 103   1  =1    //delay(1,1,1);     //17us  
+ 104   1  =1  
+ 105   1  =1    TempL=ReadOneChar();  //读出温度值低8位/低四位为小数位
+ 106   1  =1    TempH=ReadOneChar();  //读出温度值高8位/高四位和第四位为符号位
+ 107   1  =1    
+ 108   1  =1    if((TempH>>4)==0x0f)  //1111=负数 0000=正数
+ 109   1  =1      symbol = 1;
+ 110   1  =1    else
+ 111   1  =1      symbol = 0;
+ 112   1  =1  
+ 113   1  =1    Temp_Value=TempH<<4 | TempL>>4;
+ 114   1  =1    return (Temp_Value);      
+ 115   1  =1  }
+ 116      =1  
+ 117      =1  
+ 118      =1  
+ 119      =1  /*--------------------------------------------*/
+ 120      =1  //温度数据转化成液晶字符显示
+ 121      =1  void Temp_To_String(void)
+ 122      =1  {
+ 123   1  =1  
+ 124   1  =1    unsigned char  Temp_Value;
+ 125   1  =1    Temp_Value = ReadTemp();
+ 126   1  =1    if(symbol==1)
+ 127   1  =1    {
+ 128   2  =1      Temp_Value = 256 - Temp_Value;
+ 129   2  =1      TempBuffer[0]=Temp_Value/100+'-'; //符号位
+ 130   2  =1    }   
+ 131   1  =1    else
+ 132   1  =1    TempBuffer[0]=Temp_Value/100+'0'; //百位  
+ 133   1  =1    TempBuffer[1]=Temp_Value/10%10+'0'; //十位
+ 134   1  =1    TempBuffer[2]=Temp_Value%10+'0';  //个位
+ 135   1  =1    TempBuffer[3]=0xdf;         //温度符号
+ 136   1  =1    TempBuffer[4]='C';
+ 137   1  =1    TempBuffer[5]='\0';         //字符串结束标志符
+ 138   1  =1  }
+ 139      =1  
+ 140      =1  
+ 141      =1  
+ 142      =1  /*--------------------------------------------*/
+C51 COMPILER V9.59.0.0   DS18B20_3                                                         05/21/2017 09:23:06 PAGE 8   
+
+ 143      =1  #endif 
+ 144      =1  
+ 145      =1  
+ 146      =1  
+ 147      =1  
+   5          
+   6          
+   7          
+   8          
+   9          /*-----------------------------------------*/
+  10          void main(void)
+  11          {
+  12   1        lcd_init();
+  13   1        lcd_pos(0,0);
+  14   1        prints("DS18B20-ZJQS");
+  15   1        lcd_pos(0,1);
+  16   1        prints("T:");
+  17   1        while(1)
+  18   1        { 
+  19   2          Temp_To_String();
+  20   2          lcd_pos(7,1);
+  21   2          prints(TempBuffer); 
+  22   2          delay(244,7,29);
+  23   2        }
+  24   1      }
+C51 COMPILER V9.59.0.0   DS18B20_3                                                         05/21/2017 09:23:06 PAGE 9   
+
+ASSEMBLY LISTING OF GENERATED OBJECT CODE
+
+
+             ; FUNCTION lcd_busy (BEGIN)
+                                           ; SOURCE LINE # 35
+                                           ; SOURCE LINE # 36
+0000         ?C0003:
+                                           ; SOURCE LINE # 37
+                                           ; SOURCE LINE # 38
+0000 C2A0              CLR     ep
+                                           ; SOURCE LINE # 39
+0002 C2A2              CLR     rs
+                                           ; SOURCE LINE # 40
+0004 D2A1              SETB    rw
+                                           ; SOURCE LINE # 41
+0006 7580FF            MOV     io,#0FFH
+                                           ; SOURCE LINE # 42
+0009 D2A0              SETB    ep
+                                           ; SOURCE LINE # 43
+000B 00                NOP     
+                                           ; SOURCE LINE # 44
+000C 2087F1            JB      bz,?C0003
+                                           ; SOURCE LINE # 45
+000F C2A0              CLR     ep
+                                           ; SOURCE LINE # 46
+0011 22                RET     
+             ; FUNCTION lcd_busy (END)
+
+             ; FUNCTION _lcd_wcmd (BEGIN)
+                                           ; SOURCE LINE # 53
+;---- Variable 'cmd' assigned to Register 'R7' ----
+                                           ; SOURCE LINE # 54
+                                           ; SOURCE LINE # 55
+0000 120000      R     LCALL   lcd_busy
+                                           ; SOURCE LINE # 56
+0003 C2A2              CLR     rs
+                                           ; SOURCE LINE # 57
+0005 C2A1              CLR     rw
+                                           ; SOURCE LINE # 58
+0007 D2A0              SETB    ep
+                                           ; SOURCE LINE # 59
+0009 8F80              MOV     io,R7
+                                           ; SOURCE LINE # 60
+000B C2A0              CLR     ep
+                                           ; SOURCE LINE # 61
+000D 22                RET     
+             ; FUNCTION _lcd_wcmd (END)
+
+             ; FUNCTION _lcd_wdat (BEGIN)
+                                           ; SOURCE LINE # 68
+;---- Variable 'Data' assigned to Register 'R7' ----
+                                           ; SOURCE LINE # 69
+                                           ; SOURCE LINE # 70
+0000 120000      R     LCALL   lcd_busy
+                                           ; SOURCE LINE # 71
+0003 D2A2              SETB    rs
+                                           ; SOURCE LINE # 72
+0005 C2A1              CLR     rw
+                                           ; SOURCE LINE # 73
+0007 D2A0              SETB    ep
+                                           ; SOURCE LINE # 74
+0009 8F80              MOV     io,R7
+C51 COMPILER V9.59.0.0   DS18B20_3                                                         05/21/2017 09:23:06 PAGE 10  
+
+                                           ; SOURCE LINE # 75
+000B C2A0              CLR     ep
+                                           ; SOURCE LINE # 76
+000D 22                RET     
+             ; FUNCTION _lcd_wdat (END)
+
+             ; FUNCTION _lcd_pos (BEGIN)
+                                           ; SOURCE LINE # 83
+;---- Variable 'x' assigned to Register 'R6' ----
+0000 AE07              MOV     R6,AR7
+                                           ; SOURCE LINE # 84
+                                           ; SOURCE LINE # 85
+0002 EE                MOV     A,R6
+0003 300004      R     JNB     y,?C0007
+0006 44C0              ORL     A,#0C0H
+0008 8002              SJMP    ?C0043
+000A         ?C0007:
+                                           ; SOURCE LINE # 86
+000A 4480              ORL     A,#080H
+000C         ?C0043:
+000C FF                MOV     R7,A
+000D 120000      R     LCALL   _lcd_wcmd
+                                           ; SOURCE LINE # 87
+0010         ?C0009:
+0010 22                RET     
+             ; FUNCTION _lcd_pos (END)
+
+             ; FUNCTION _prints (BEGIN)
+                                           ; SOURCE LINE # 105
+0000 8B00        R     MOV     string,R3
+0002 8A00        R     MOV     string+01H,R2
+0004 8900        R     MOV     string+02H,R1
+                                           ; SOURCE LINE # 106
+                                           ; SOURCE LINE # 109
+;---- Variable 'i' assigned to Register 'R6' ----
+0006 E4                CLR     A
+0007 FE                MOV     R6,A
+0008         ?C0010:
+0008 AB00        R     MOV     R3,string
+000A AA00        R     MOV     R2,string+01H
+000C A900        R     MOV     R1,string+02H
+000E 8E82              MOV     DPL,R6
+0010 758300            MOV     DPH,#00H
+0013 120000      E     LCALL   ?C?CLDOPTR
+0016 FF                MOV     R7,A
+0017 6006              JZ      ?C0013
+0019 120000      R     LCALL   _lcd_wdat
+001C 0E                INC     R6
+001D 80E9              SJMP    ?C0010
+                                           ; SOURCE LINE # 110
+001F         ?C0013:
+001F 22                RET     
+             ; FUNCTION _prints (END)
+
+             ; FUNCTION lcd_init (BEGIN)
+                                           ; SOURCE LINE # 117
+                                           ; SOURCE LINE # 118
+                                           ; SOURCE LINE # 119
+0000 7F38              MOV     R7,#038H
+0002 120000      R     LCALL   _lcd_wcmd
+                                           ; SOURCE LINE # 120
+0005 7F06              MOV     R7,#06H
+C51 COMPILER V9.59.0.0   DS18B20_3                                                         05/21/2017 09:23:06 PAGE 11  
+
+0007 120000      R     LCALL   _lcd_wcmd
+                                           ; SOURCE LINE # 121
+000A 7F0C              MOV     R7,#0CH
+000C 120000      R     LCALL   _lcd_wcmd
+                                           ; SOURCE LINE # 122
+000F 7F01              MOV     R7,#01H
+0011 020000      R     LJMP    _lcd_wcmd
+             ; FUNCTION lcd_init (END)
+
+             ; FUNCTION L?0044 (BEGIN)
+0000 7B01              MOV     R3,#01H
+0002 7D05              MOV     R5,#05H
+             ; FUNCTION _delay (BEGIN)
+                                           ; SOURCE LINE # 23
+;---- Variable 'x' assigned to Register 'R7' ----
+;---- Variable 'z' assigned to Register 'R3' ----
+;---- Variable 'y' assigned to Register 'R5' ----
+                                           ; SOURCE LINE # 24
+                                           ; SOURCE LINE # 25
+;---- Variable 'tempz' assigned to Register 'R3' ----
+0004         ?C0017:
+                                           ; SOURCE LINE # 26
+;---- Variable 'tempy' assigned to Register 'R6' ----
+0004 AE05              MOV     R6,AR5
+0006         ?C0020:
+;---- Variable 'tempx' assigned to Register 'R4' ----
+0006 AC07              MOV     R4,AR7
+0008         ?C0021:
+0008 DCFE              DJNZ    R4,?C0021
+000A DEFA              DJNZ    R6,?C0020
+000C DBF6              DJNZ    R3,?C0017
+                                           ; SOURCE LINE # 27
+000E 22                RET     
+             ; FUNCTION _delay (END)
+
+             ; FUNCTION Init_DS18B20 (BEGIN)
+                                           ; SOURCE LINE # 33
+                                           ; SOURCE LINE # 34
+                                           ; SOURCE LINE # 35
+0000 C200        R     CLR     Status
+                                           ; SOURCE LINE # 36
+0002 D297              SETB    DQ
+                                           ; SOURCE LINE # 38
+0004 C297              CLR     DQ
+                                           ; SOURCE LINE # 39
+0006 7B13              MOV     R3,#013H
+0008 7D01              MOV     R5,#01H
+000A 7F09              MOV     R7,#09H
+000C 120000      R     LCALL   _delay
+                                           ; SOURCE LINE # 40
+000F D297              SETB    DQ
+                                           ; SOURCE LINE # 41
+0011 7B02              MOV     R3,#02H
+0013 7F02              MOV     R7,#02H
+0015 120000      R     LCALL   _delay
+                                           ; SOURCE LINE # 42
+0018 A297              MOV     C,DQ
+001A 9200        R     MOV     Status,C
+                                           ; SOURCE LINE # 43
+001C 7F0A              MOV     R7,#0AH
+001E 120000      R     LCALL   L?0044
+                                           ; SOURCE LINE # 44
+C51 COMPILER V9.59.0.0   DS18B20_3                                                         05/21/2017 09:23:06 PAGE 12  
+
+0021 A200        R     MOV     C,Status
+                                           ; SOURCE LINE # 45
+0023 22                RET     
+             ; FUNCTION Init_DS18B20 (END)
+
+             ; FUNCTION ReadOneChar (BEGIN)
+                                           ; SOURCE LINE # 51
+                                           ; SOURCE LINE # 52
+                                           ; SOURCE LINE # 53
+;---- Variable 'i' assigned to Register 'R2' ----
+0000 E4                CLR     A
+                                           ; SOURCE LINE # 54
+;---- Variable 'dat' assigned to Register 'R1' ----
+0001 F9                MOV     R1,A
+                                           ; SOURCE LINE # 55
+0002 7A08              MOV     R2,#08H
+0004         ?C0025:
+0004 EA                MOV     A,R2
+0005 D3                SETB    C
+0006 9400              SUBB    A,#00H
+0008 7480              MOV     A,#080H
+000A 9480              SUBB    A,#080H
+000C 4015              JC      ?C0026
+                                           ; SOURCE LINE # 56
+                                           ; SOURCE LINE # 57
+000E C297              CLR     DQ
+                                           ; SOURCE LINE # 58
+0010 E9                MOV     A,R1
+0011 13                RRC     A
+0012 F9                MOV     R1,A
+                                           ; SOURCE LINE # 59
+0013 D297              SETB    DQ
+                                           ; SOURCE LINE # 60
+0015 309703            JNB     DQ,?C0028
+                                           ; SOURCE LINE # 61
+0018 430180            ORL     AR1,#080H
+001B         ?C0028:
+                                           ; SOURCE LINE # 62
+001B 7F04              MOV     R7,#04H
+001D 120000      R     LCALL   L?0044
+                                           ; SOURCE LINE # 63
+0020 1A                DEC     R2
+0021 80E1              SJMP    ?C0025
+0023         ?C0026:
+                                           ; SOURCE LINE # 64
+0023 AF01              MOV     R7,AR1
+                                           ; SOURCE LINE # 65
+0025 22                RET     
+             ; FUNCTION ReadOneChar (END)
+
+             ; FUNCTION _WriteOneChar (BEGIN)
+                                           ; SOURCE LINE # 71
+;---- Variable 'dat' assigned to Register 'R1' ----
+0000 A907              MOV     R1,AR7
+                                           ; SOURCE LINE # 72
+                                           ; SOURCE LINE # 73
+;---- Variable 'i' assigned to Register 'R2' ----
+                                           ; SOURCE LINE # 74
+0002 7A08              MOV     R2,#08H
+0004         ?C0030:
+0004 EA                MOV     A,R2
+0005 D3                SETB    C
+C51 COMPILER V9.59.0.0   DS18B20_3                                                         05/21/2017 09:23:06 PAGE 13  
+
+0006 9400              SUBB    A,#00H
+0008 7480              MOV     A,#080H
+000A 9480              SUBB    A,#080H
+000C 4018              JC      ?C0033
+                                           ; SOURCE LINE # 75
+                                           ; SOURCE LINE # 76
+000E C297              CLR     DQ
+                                           ; SOURCE LINE # 77
+0010 E9                MOV     A,R1
+0011 13                RRC     A
+0012 9297              MOV     DQ,C
+                                           ; SOURCE LINE # 78
+0014 7B01              MOV     R3,#01H
+0016 7D05              MOV     R5,#05H
+0018 7F03              MOV     R7,#03H
+001A 120000      R     LCALL   _delay
+                                           ; SOURCE LINE # 79
+001D D297              SETB    DQ
+                                           ; SOURCE LINE # 80
+001F E9                MOV     A,R1
+0020 C3                CLR     C
+0021 13                RRC     A
+0022 F9                MOV     R1,A
+                                           ; SOURCE LINE # 81
+0023 1A                DEC     R2
+0024 80DE              SJMP    ?C0030
+                                           ; SOURCE LINE # 82
+0026         ?C0033:
+0026 22                RET     
+             ; FUNCTION _WriteOneChar (END)
+
+             ; FUNCTION ReadTemp (BEGIN)
+                                           ; SOURCE LINE # 88
+                                           ; SOURCE LINE # 89
+                                           ; SOURCE LINE # 90
+0000 E4                CLR     A
+0001 F500        R     MOV     TempL,A
+                                           ; SOURCE LINE # 91
+;---- Variable 'TempH' assigned to Register 'R7' ----
+0003 FF                MOV     R7,A
+                                           ; SOURCE LINE # 95
+0004 120000      R     LCALL   Init_DS18B20
+                                           ; SOURCE LINE # 96
+0007 7FCC              MOV     R7,#0CCH
+0009 120000      R     LCALL   _WriteOneChar
+                                           ; SOURCE LINE # 97
+000C 7F44              MOV     R7,#044H
+000E 120000      R     LCALL   _WriteOneChar
+                                           ; SOURCE LINE # 98
+0011 7B11              MOV     R3,#011H
+0013 7D5E              MOV     R5,#05EH
+0015 7FD9              MOV     R7,#0D9H
+0017 120000      R     LCALL   _delay
+                                           ; SOURCE LINE # 100
+001A 120000      R     LCALL   Init_DS18B20
+                                           ; SOURCE LINE # 101
+001D 7FCC              MOV     R7,#0CCH
+001F 120000      R     LCALL   _WriteOneChar
+                                           ; SOURCE LINE # 102
+0022 7FBE              MOV     R7,#0BEH
+0024 120000      R     LCALL   _WriteOneChar
+                                           ; SOURCE LINE # 105
+C51 COMPILER V9.59.0.0   DS18B20_3                                                         05/21/2017 09:23:06 PAGE 14  
+
+0027 120000      R     LCALL   ReadOneChar
+002A 8F00        R     MOV     TempL,R7
+                                           ; SOURCE LINE # 106
+002C 120000      R     LCALL   ReadOneChar
+                                           ; SOURCE LINE # 108
+002F EF                MOV     A,R7
+0030 C4                SWAP    A
+0031 540F              ANL     A,#0FH
+0033 640F              XRL     A,#0FH
+0035 7004              JNZ     ?C0034
+                                           ; SOURCE LINE # 109
+0037 D200        R     SETB    symbol
+0039 8002              SJMP    ?C0035
+003B         ?C0034:
+                                           ; SOURCE LINE # 111
+003B C200        R     CLR     symbol
+003D         ?C0035:
+                                           ; SOURCE LINE # 113
+003D EF                MOV     A,R7
+003E C4                SWAP    A
+003F 54F0              ANL     A,#0F0H
+0041 FF                MOV     R7,A
+0042 E500        R     MOV     A,TempL
+0044 C4                SWAP    A
+0045 540F              ANL     A,#0FH
+0047 4F                ORL     A,R7
+0048 FF                MOV     R7,A
+;---- Variable 'Temp_Value' assigned to Register 'R7' ----
+                                           ; SOURCE LINE # 114
+                                           ; SOURCE LINE # 115
+0049 22                RET     
+             ; FUNCTION ReadTemp (END)
+
+             ; FUNCTION Temp_To_String (BEGIN)
+                                           ; SOURCE LINE # 121
+                                           ; SOURCE LINE # 122
+                                           ; SOURCE LINE # 125
+0000 120000      R     LCALL   ReadTemp
+;---- Variable 'Temp_Value' assigned to Register 'R7' ----
+                                           ; SOURCE LINE # 126
+0003 EF                MOV     A,R7
+0004 30000D      R     JNB     symbol,?C0037
+                                           ; SOURCE LINE # 127
+                                           ; SOURCE LINE # 128
+0007 F4                CPL     A
+0008 04                INC     A
+0009 FF                MOV     R7,A
+                                           ; SOURCE LINE # 129
+000A 75F064            MOV     B,#064H
+000D 84                DIV     AB
+000E 242D              ADD     A,#02DH
+0010 F500        R     MOV     TempBuffer,A
+                                           ; SOURCE LINE # 130
+0012 8008              SJMP    ?C0038
+0014         ?C0037:
+                                           ; SOURCE LINE # 132
+0014 75F064            MOV     B,#064H
+0017 84                DIV     AB
+0018 2430              ADD     A,#030H
+001A F500        R     MOV     TempBuffer,A
+001C         ?C0038:
+                                           ; SOURCE LINE # 133
+C51 COMPILER V9.59.0.0   DS18B20_3                                                         05/21/2017 09:23:06 PAGE 15  
+
+001C EF                MOV     A,R7
+001D 75F00A            MOV     B,#0AH
+0020 84                DIV     AB
+0021 75F00A            MOV     B,#0AH
+0024 84                DIV     AB
+0025 E5F0              MOV     A,B
+0027 2430              ADD     A,#030H
+0029 F500        R     MOV     TempBuffer+01H,A
+                                           ; SOURCE LINE # 134
+002B EF                MOV     A,R7
+002C 75F00A            MOV     B,#0AH
+002F 84                DIV     AB
+0030 E5F0              MOV     A,B
+0032 2430              ADD     A,#030H
+0034 F500        R     MOV     TempBuffer+02H,A
+                                           ; SOURCE LINE # 135
+0036 7500DF      R     MOV     TempBuffer+03H,#0DFH
+                                           ; SOURCE LINE # 136
+0039 750043      R     MOV     TempBuffer+04H,#043H
+                                           ; SOURCE LINE # 137
+003C E4                CLR     A
+003D F500        R     MOV     TempBuffer+05H,A
+                                           ; SOURCE LINE # 138
+003F 22                RET     
+             ; FUNCTION Temp_To_String (END)
+
+             ; FUNCTION main (BEGIN)
+                                           ; SOURCE LINE # 10
+                                           ; SOURCE LINE # 11
+                                           ; SOURCE LINE # 12
+0000 120000      R     LCALL   lcd_init
+                                           ; SOURCE LINE # 13
+0003 C200        R     CLR     ?_lcd_pos?BIT
+0005 E4                CLR     A
+0006 FF                MOV     R7,A
+0007 120000      R     LCALL   _lcd_pos
+                                           ; SOURCE LINE # 14
+000A 7BFF              MOV     R3,#0FFH
+000C 7A00        R     MOV     R2,#HIGH ?SC_0
+000E 7900        R     MOV     R1,#LOW ?SC_0
+0010 120000      R     LCALL   _prints
+                                           ; SOURCE LINE # 15
+0013 D200        R     SETB    ?_lcd_pos?BIT
+0015 E4                CLR     A
+0016 FF                MOV     R7,A
+0017 120000      R     LCALL   _lcd_pos
+                                           ; SOURCE LINE # 16
+001A 7BFF              MOV     R3,#0FFH
+001C 7A00        R     MOV     R2,#HIGH ?SC_13
+001E 7900        R     MOV     R1,#LOW ?SC_13
+0020 120000      R     LCALL   _prints
+0023         ?C0040:
+                                           ; SOURCE LINE # 17
+                                           ; SOURCE LINE # 18
+                                           ; SOURCE LINE # 19
+0023 120000      R     LCALL   Temp_To_String
+                                           ; SOURCE LINE # 20
+0026 D200        R     SETB    ?_lcd_pos?BIT
+0028 7F07              MOV     R7,#07H
+002A 120000      R     LCALL   _lcd_pos
+                                           ; SOURCE LINE # 21
+002D 7B00              MOV     R3,#00H
+C51 COMPILER V9.59.0.0   DS18B20_3                                                         05/21/2017 09:23:06 PAGE 16  
+
+002F 7A00        R     MOV     R2,#HIGH TempBuffer
+0031 7900        R     MOV     R1,#LOW TempBuffer
+0033 120000      R     LCALL   _prints
+                                           ; SOURCE LINE # 22
+0036 7B1D              MOV     R3,#01DH
+0038 7D07              MOV     R5,#07H
+003A 7FF4              MOV     R7,#0F4H
+003C 120000      R     LCALL   _delay
+                                           ; SOURCE LINE # 23
+003F 80E2              SJMP    ?C0040
+             ; FUNCTION main (END)
+
+C51 COMPILER V9.59.0.0   DS18B20_3                                                         05/21/2017 09:23:06 PAGE 17  
+
+NAME                                    CLASS   MSPACE  TYPE    OFFSET  SIZE
+====                                    =====   ======  ====    ======  ====
+
+
+P1 . . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   0090H  1
+P2 . . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00A0H  1
+P3 . . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00B0H  1
+IE . . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00A8H  1
+_delay . . . . . . . . . . . . . . . .  PUBLIC   CODE   PROC     0004H  -----
+  x. . . . . . . . . . . . . . . . . .  * REG *  DATA   U_CHAR   0007H  1
+  y. . . . . . . . . . . . . . . . . .  * REG *  DATA   U_CHAR   0005H  1
+  z. . . . . . . . . . . . . . . . . .  * REG *  DATA   U_CHAR   0003H  1
+  tempx. . . . . . . . . . . . . . . .  * REG *  DATA   U_CHAR   0004H  1
+  tempy. . . . . . . . . . . . . . . .  * REG *  DATA   U_CHAR   0006H  1
+  tempz. . . . . . . . . . . . . . . .  * REG *  DATA   U_CHAR   0003H  1
+DQ . . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      0097H  1
+ReadTemp . . . . . . . . . . . . . . .  PUBLIC   CODE   PROC     0000H  -----
+  TempL. . . . . . . . . . . . . . . .  AUTO     DATA   U_CHAR   0000H  1
+  TempH. . . . . . . . . . . . . . . .  * REG *  DATA   U_CHAR   0007H  1
+  Temp_Value . . . . . . . . . . . . .  * REG *  DATA   U_CHAR   0007H  1
+Temp_To_String . . . . . . . . . . . .  PUBLIC   CODE   PROC     0000H  -----
+  Temp_Value . . . . . . . . . . . . .  * REG *  DATA   U_CHAR   0007H  1
+IP . . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00B8H  1
+symbol . . . . . . . . . . . . . . . .  PUBLIC   DATA   BIT      0000H  1
+Init_DS18B20 . . . . . . . . . . . . .  PUBLIC   CODE   PROC     0000H  -----
+  Status . . . . . . . . . . . . . . .  AUTO     DATA   BIT      0000H  1
+ReadOneChar. . . . . . . . . . . . . .  PUBLIC   CODE   PROC     0000H  -----
+  i. . . . . . . . . . . . . . . . . .  * REG *  DATA   U_CHAR   0002H  1
+  dat. . . . . . . . . . . . . . . . .  * REG *  DATA   U_CHAR   0001H  1
+_prints. . . . . . . . . . . . . . . .  PUBLIC   CODE   PROC     0000H  -----
+  string . . . . . . . . . . . . . . .  AUTO     DATA   PTR      0000H  3
+  i. . . . . . . . . . . . . . . . . .  * REG *  DATA   U_CHAR   0006H  1
+main . . . . . . . . . . . . . . . . .  PUBLIC   CODE   PROC     0000H  -----
+_WriteOneChar. . . . . . . . . . . . .  PUBLIC   CODE   PROC     0000H  -----
+  dat. . . . . . . . . . . . . . . . .  * REG *  DATA   U_CHAR   0001H  1
+  i. . . . . . . . . . . . . . . . . .  * REG *  DATA   U_CHAR   0002H  1
+SCON . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   0098H  1
+TCON . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   0088H  1
+_lcd_wcmd. . . . . . . . . . . . . . .  PUBLIC   CODE   PROC     0000H  -----
+  cmd. . . . . . . . . . . . . . . . .  * REG *  DATA   U_CHAR   0007H  1
+_lcd_wdat. . . . . . . . . . . . . . .  PUBLIC   CODE   PROC     0000H  -----
+  Data . . . . . . . . . . . . . . . .  * REG *  DATA   U_CHAR   0007H  1
+lcd_init . . . . . . . . . . . . . . .  PUBLIC   CODE   PROC     0000H  -----
+ep . . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00A0H  1
+io . . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   0080H  1
+lcd_busy . . . . . . . . . . . . . . .  PUBLIC   CODE   PROC     0000H  -----
+bz . . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      0087H  1
+rs . . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00A2H  1
+T2CON. . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00C8H  1
+_lcd_pos . . . . . . . . . . . . . . .  PUBLIC   CODE   PROC     0000H  -----
+  x. . . . . . . . . . . . . . . . . .  * REG *  DATA   U_CHAR   0006H  1
+  y. . . . . . . . . . . . . . . . . .  AUTO     DATA   BIT      0000H  1
+rw . . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00A1H  1
+TempBuffer . . . . . . . . . . . . . .  PUBLIC   DATA   ARRAY    0000H  6
+PSW. . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00D0H  1
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    446    ----
+   CONSTANT SIZE    =     16    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+C51 COMPILER V9.59.0.0   DS18B20_3                                                         05/21/2017 09:23:06 PAGE 18  
+
+   DATA SIZE        =      6       4
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =      1       2
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

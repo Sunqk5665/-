@@ -1,0 +1,21 @@
+<html>
+<body>
+<pre>
+<h1>礦ision Build Log</h1>
+<h2>Project:</h2>
+C:\Users\DuDaye\Desktop\5.程序（常规实验）\5.计数器实验\jsq.uvproj
+Project File Date:  06/05/2019
+
+<h2>Output:</h2>
+Rebuild target 'Target 1'
+compiling jsq.c...
+linking...
+Program Size: data=10.0 xdata=0 code=377
+creating hex file from "jsq"...
+"jsq" - 0 Error(s), 0 Warning(s).
+Rebuild target 'Target 1'
+compiling jsq.c...
+linking...
+Program Size: data=10.0 xdata=0 code=377
+creating hex file from "jsq"...
+"jsq" - 0 Error(s), 0 Warning(s).

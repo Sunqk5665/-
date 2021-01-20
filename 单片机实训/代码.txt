@@ -1,0 +1,274 @@
+		#include<reg52.h>
+//#include<intrins.h>
+#include<pxh.h>
+#define uchar unsigned char
+#define uint unsigned int
+/*****************************IO引脚定义*************************************/
+sbit ser=P1^0;
+sbit nss=P1^1;
+sbit clk=P1^2;
+//sbit model=P3^2;
+//sbit stop=P3^3;
+sbit star=P2^0;//定义播放按钮
+/******************************数据定义*************************************/
+uchar count;
+uint offset=0;
+uint offsetb; //控制不同子函数的偏移量
+uint v=2;//控制速度
+uint a=1;//模式选择标志位
+uchar lietab[]={0x7f,0xbf,0xdf,0xef,0xf7,0xfb,0xfd,0xfe};//列扫描
+uchar lietab2[]={0x80,0x40,0x20,0x10,0x08,0x04,0x02,0x01};//行扫描
+/*************************函数声明********************************************/
+void sendbyte(uchar dat);
+void delayms(uchar t);
+void init();
+void sdkj1();//左移显示
+void sdkj2();//右移显示
+void sdkj3(); //上移显示
+void sdkj4(); //下移显示
+void sdkj5();//循环显示	  
+
+/***********************主函数开始********************************************/
+void main()
+{
+	init();    //所用中断初始化 
+	while(1)    //主循环
+	{
+		if(a==1)	 //模式1
+		{
+			sdkj1();
+		}
+    	else if(a==2)  //模式2
+		{
+		 	sdkj2();
+		}
+		else if(a==3)  //模式3
+		{ 
+		    sdkj3();
+		}
+		else if(a==4)  //模式4
+		{ 
+		    sdkj4();
+		}
+		else if(a==5)  //模式5
+		{ 
+		    sdkj5();
+		}
+		  if(star==0)//判断播放
+		{
+			delayms(3);
+			if(star==0)
+				TR0=1;
+		}
+	}
+}
+/*************************左移显示*****************************************/
+void sdkj1()
+{
+	uchar i;
+	v=20;
+	offsetb=2*offset;
+	if(offsetb>=224)
+		offset=0;	 //循环滚动
+	for(i=0;i<8;i++)
+	{
+		nss=0;
+		sendbyte(0xff);			   	//左半屏幕显示
+		sendbyte(lietab[i]);       	//采用列扫描 在lietab[]中取值
+		sendbyte(tab[2*i+1+offsetb]);//与电路和tab[]有关
+		sendbyte(tab[2*i+offsetb]);	//与电路和tab[]有关
+		nss=1;						//595串入并出 4个值都送完了,才一起显示,
+		delayms(3);					//不然送一个显示一个会闪烁
+	}
+	for(i=8;i<16;i++)
+	{
+		nss=0;
+		sendbyte(lietab[i-8]);	   	//采用列扫描 在lietab[]中取值
+		sendbyte(0xff);			   	//右半屏幕显示
+		sendbyte(tab[2*i+1+offsetb]);
+		sendbyte(tab[2*i+offsetb]);
+		nss=1;
+		delayms(3);
+	} 
+}
+ /*************************右移显示*****************************************/
+ void sdkj2()
+{
+	uchar i;
+	v=2;
+	offsetb=2*offset;					//每次偏移一列
+	if(offsetb>=224)					
+		    offset=0;
+	for(i=0;i<8;i++)
+		{
+			nss=0;
+			sendbyte(0xff);			   	//左半屏幕显示
+			sendbyte(lietab[i]);       	//采用列扫描 在lietab[]中取值
+			sendbyte(tab[2*i+1+224-offsetb]);//与电路和tab[]有关
+			sendbyte(tab[2*i+224-offsetb]);	//与电路和tab[]有关
+			nss=1;						//595串入并出 4个值都送完了,才一起显示,
+			delayms(3);					//不然送一个显示一个会闪烁
+		}
+		for(i=8;i<16;i++)
+		{
+			nss=0;
+			sendbyte(lietab[i-8]);	   	//采用列扫描 在lietab[]中取值
+			sendbyte(0xff);			   	//右半屏幕显示
+			sendbyte(tab[2*i+1+224-offsetb]);
+			sendbyte(tab[2*i+224-offsetb]);
+			nss=1;
+			delayms(3);
+		} 		
+}
+
+/*************************上移显示****************************************/
+ void sdkj3()
+{
+	uchar i;
+	v=2;
+	offsetb=2*offset;					//每次偏移一行
+	 if(offsetb>=224)
+		offset=0;
+	for(i=0;i<8;i++)
+	{
+		nss=0;
+		sendbyte(tab2[2*i+1+offsetb]);
+		sendbyte(tab2[2*i+offsetb]);
+		sendbyte(0x00);			   	//上半屏幕显示
+		sendbyte(lietab2[i]);       //采用行扫描 在lietab2[]中取值
+		nss=1;						//595串入并出 4个值都送完了,才一起显示,
+		delayms(3);					//不然送一个显示一个会闪烁
+	}
+	for(i=8;i<16;i++)
+	{
+		nss=0;
+			
+		sendbyte(tab2[2*i+1+offsetb]);
+		sendbyte(tab2[2*i+offsetb]); 
+		sendbyte(lietab2[i-8]);	   	//采用行扫描 在lietab2[]中取值
+		sendbyte(0x00);			   	//下半屏幕显示
+		nss=1;
+		delayms(3);
+	} 
+} 
+/*************************下移显示******************************************/
+    void sdkj4()
+{								  
+	uchar i;
+	v=2;
+	offsetb=2*offset;					//每次偏移一行
+	if(offsetb>=224)
+		offset=0; 
+	for(i=0;i<8;i++)
+	{
+		nss=0;
+		sendbyte(tab2[2*i+1+224-offsetb]);//与电路和tab[]有关
+		sendbyte(tab2[2*i+224-offsetb]);	//与电路和tab[]有关
+		sendbyte(0x00);			   	//上半屏幕显示
+		sendbyte(lietab2[i]);       	//采用行扫描 在lietab2[]中取值
+		nss=1;						//595串入并出 4个值都送完了,才一起显示,
+		delayms(3);					//不然送一个显示一个会闪烁
+	}
+	for(i=8;i<16;i++)
+	{
+		nss=0;	
+		sendbyte(tab2[2*i+1+224-offsetb]);
+		sendbyte(tab2[2*i+224-offsetb]); 
+		sendbyte(lietab2[i-8]);	   	//采用行扫描 在lietab2[]中取值
+		sendbyte(0x00);			   	//下半屏幕显示
+		nss=1;
+		delayms(3);
+	} 
+} 
+/*************************循环显示*****************************************/
+void sdkj5()
+{
+	
+	uchar i;
+	v=20;
+	offsetb=32*offset+32;				//整体偏移16列即一个屏幕的距离达成循环显示
+	if(offsetb>=224)
+		offset=0;
+	for(i=0;i<8;i++)
+	{		
+		nss=0;
+		sendbyte(0xff);			   	//左半屏幕显示
+		sendbyte(lietab[i]);       	//采用列扫描 在lietab[]中取值
+		sendbyte(tab[2*i+1+offsetb]);//与电路和tab[]有关
+		sendbyte(tab[2*i+offsetb]);	//与电路和tab[]有关
+		nss=1;						//595串入并出 4个值都送完了,才一起显示,
+		delayms(3);					//不然送一个显示一个会闪烁
+	}
+	for(i=8;i<16;i++)
+	{
+		nss=0;
+		sendbyte(lietab[i-8]);	   	//采用列扫描 在lietab[]中取值
+		sendbyte(0xff);			   	//右半屏幕显示
+		sendbyte(tab[2*i+1+offsetb]);
+		sendbyte(tab[2*i+offsetb]);
+		nss=1;
+		delayms(3);
+	} 
+}
+/************************中断初始化*****************************************/
+void init()
+{
+	TMOD=0x01; //定时器016位定时器
+    IT0=1;//外部中断0下降沿触发
+	IT1=1;//外部中断1下降沿触发
+	EA=1; //开总中断
+	ET0=1;//定时器0中断
+	EX0=1;//外部中断0
+	EX1=1; //外部中断1
+	TH0=0x3c;
+	TL0=0xb0;
+	TR0=1;
+	
+}
+/*************************定时器中断服务子程序*************************************/
+void time0() interrupt 1 
+{
+	TH0=0x3c;
+	TL0=0xb0;
+	count++;
+	if(count>=v)		 //控制滚动的速度
+	{
+		count=0;
+		offset+=1;		 //滚动的偏移量offset
+	}		
+}
+ /*************************外部中断0服务子程序*************************************/
+void int0() interrupt 0 
+{
+  	a=a+1;
+	offset=0;
+	if(a==6)
+		a=1;
+}
+ /*************************外部中断1服务子程序*************************************/
+  void int1() interrupt 2 
+{
+  	TR0=0;
+}
+/***************************** 发送数据给595********************************/
+void sendbyte(unsigned char dat)
+{
+	uchar i,temp;	  
+	temp=dat;
+	for(i=0;i<8;i++)
+	{	
+	    clk=0;
+		if(temp&0x01)
+			ser=1;
+		else
+			ser=0;		
+		clk=1;
+		temp>>=1;
+	}	
+}
+void delayms(unsigned char t)  //延时tms
+{
+	unsigned char x,y;
+	for(x=t;x>0;x--)
+		for(y=110;y>0;y--);
+}

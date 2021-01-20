@@ -1,0 +1,58 @@
+<html>
+<body>
+<pre>
+<h1>礦ision Build Log</h1>
+<h2>Project:</h2>
+C:\Users\Administrator\Desktop\尚未完成任务\1.程序（-330-XA系列单片机挂箱常规实验） 工艺改进 杜如愿 2019.7.2\1.程序（-330-XA系列单片机挂箱常规实验）\26.语音录放实验\语音1700 资料\用单片机控制的资料\程序\isd1700prgv2.0\isd1700play.uvproj
+Project File Date:  08/28/2017
+
+<h2>Output:</h2>
+Build target 'Target 1'
+compiling main.c...
+compiling isd1700.c...
+linking...
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?INIT?MAIN
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?_PLAYSOUNDTICK?MAIN
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?COMM_SATE?ISD1700
+Program Size: data=38.2 xdata=0 code=1324
+creating hex file from "isd1700play"...
+"isd1700play" - 0 Error(s), 3 Warning(s).
+Rebuild target 'Target 1'
+assembling STARTUP.A51...
+compiling main.c...
+compiling isd1700.c...
+linking...
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?INIT?MAIN
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?_PLAYSOUNDTICK?MAIN
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?COMM_SATE?ISD1700
+Program Size: data=38.2 xdata=0 code=1324
+creating hex file from "isd1700play"...
+"isd1700play" - 0 Error(s), 3 Warning(s).
+Build target 'Target 1'
+compiling main.c...
+linking...
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?_PLAYSOUNDTICK?MAIN
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?COMM_SATE?ISD1700
+Program Size: data=38.2 xdata=0 code=1327
+creating hex file from "isd1700play"...
+"isd1700play" - 0 Error(s), 2 Warning(s).
+Rebuild target 'Target 1'
+assembling STARTUP.A51...
+compiling main.c...
+compiling isd1700.c...
+linking...
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?_PLAYSOUNDTICK?MAIN
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?COMM_SATE?ISD1700
+Program Size: data=38.2 xdata=0 code=1327
+creating hex file from "isd1700play"...
+"isd1700play" - 0 Error(s), 2 Warning(s).

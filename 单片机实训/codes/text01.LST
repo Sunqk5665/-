@@ -1,0 +1,351 @@
+C51 COMPILER V9.01   TEXT01                                                                01/07/2021 19:20:03 PAGE 1   
+
+
+C51 COMPILER V9.01, COMPILATION OF MODULE TEXT01
+OBJECT MODULE PLACED IN text01.OBJ
+COMPILER INVOKED BY: D:\KEILC51\C51\BIN\C51.EXE text01.c BROWSE DEBUG OBJECTEXTEND
+
+line level    source
+
+   1          /***************************************************************************
+   2          **实验名称: 16X16点阵显示汉字
+   3          **实验效果: 循环显示"山东科技大学"六个汉字，显示时共有5中切换方式，分别为：轮流、左移、右移、下移和上移
+   4          **实验作者：Sunqker
+   5          **时间: 2021/01/07
+   6          ***************************************************************************/
+   7          /*****************************头文件声明**************************************/
+   8          #include<reg52.h>
+   9          #include<intrins.h>
+  10          #include<pxh.h>
+  11          #define uchar unsigned char
+  12          #define uint unsigned int
+  13          /*****************************IO引脚定义*************************************/
+  14          sbit ser=P1^0;
+  15          sbit nss=P1^1;
+  16          sbit clk=P1^2;
+  17          sbit k1 =P2^0;  //k1播放按键
+  18          sbit k2 =P2^1;  //k2暂停按键
+  19          sbit k3 =P3^2;  //k3模式切换按键
+  20          /******************************数据定义*************************************/
+  21          uchar count;
+  22          int flag=1;
+  23          uint offset=0;
+  24          uint offsetb;   //控制不同子函数的偏移量
+  25          uint v=2;               //控制速度
+  26          uint a=1;               //模式选择标志位
+  27          uchar lietab[]={0x7f,0xbf,0xdf,0xef,0xf7,0xfb,0xfd,0xfe};//列扫描
+  28          uchar lietab2[]={0x80,0x40,0x20,0x10,0x08,0x04,0x02,0x01};//行扫描
+  29          
+  30          /*************************函数声明********************************************/
+  31          void sendbyte(uchar dat);
+  32          void delayms(uchar t);
+  33          void DelayUs(uint M);
+  34          void init();
+  35          void display1();//左移显示
+  36          void display2();//右移显示
+  37          void display3();//上移显示
+  38          void display4();//下移显示
+  39          void display5();//循环显示
+  40          void stop();    //停止函数
+  41          void start();   //播放函数        
+  42          /***********************************/
+  43          void DelayUs(uint M)  //毫秒延时函数，延时(M) ms
+  44          {
+  45   1          uint i;
+  46   1              uint j;
+  47   1              for(i=0;i<M;i++)
+  48   1              {
+  49   2                      for(j=0;j<200;j++);
+  50   2                      for(j=0;j<102;j++);
+  51   2              }
+  52   1      }
+  53          /***********************主函数开始********************************************/
+  54          void main()
+  55          {
+C51 COMPILER V9.01   TEXT01                                                                01/07/2021 19:20:03 PAGE 2   
+
+  56   1              init();         //所用中断初始化 
+  57   1              while(1)    //主循环
+  58   1              {
+  59   2                      stop();
+  60   2                      start();
+  61   2                      if(a==1)         //模式1
+  62   2                      {
+  63   3                              display1();
+  64   3                      }
+  65   2              else if(a==2)  //模式2
+  66   2                      {
+  67   3                              display2();
+  68   3                      }
+  69   2                      else if(a==3)  //模式3
+  70   2                      { 
+  71   3                          display3();
+  72   3                      }
+  73   2                      else if(a==4)  //模式4
+  74   2                      { 
+  75   3                          display4();
+  76   3                      }
+  77   2                      else if(a==5)  //模式5
+  78   2                      { 
+  79   3                          display5();
+  80   3                      }
+  81   2              }
+  82   1      }
+  83          /*************************模式1：左移显示*****************************************/
+  84          void display1()
+  85          {
+  86   1              uchar i;
+  87   1              v=2;
+  88   1              offsetb=2*offset;
+  89   1              if(offsetb>=224)
+  90   1                      offset=0;        //循环滚动
+  91   1              for(i=0;i<8;i++)
+  92   1              {
+  93   2                      nss=0;
+  94   2                      sendbyte(0xff);                         //左半屏幕显示
+  95   2                      sendbyte(lietab[i]);            //采用列扫描 在lietab[]中取值
+  96   2                      sendbyte(tab[2*i+1+offsetb]);//与电路和tab[]有关
+  97   2                      sendbyte(tab[2*i+offsetb]);     //与电路和tab[]有关
+  98   2                      nss=1;                                          //595串入并出 4个值都送完了,才一起显示,
+  99   2                      delayms(3);                                     //不然送一个显示一个会闪烁
+ 100   2              }
+ 101   1              for(i=8;i<16;i++)
+ 102   1              {
+ 103   2                      nss=0;
+ 104   2                      sendbyte(lietab[i-8]);          //采用列扫描 在lietab[]中取值
+ 105   2                      sendbyte(0xff);                         //右半屏幕显示
+ 106   2                      sendbyte(tab[2*i+1+offsetb]);
+ 107   2                      sendbyte(tab[2*i+offsetb]);
+ 108   2                      nss=1;
+ 109   2                      delayms(3);
+ 110   2              } 
+ 111   1      }
+ 112           /*************************模式2：右移显示*****************************************/
+ 113           void display2()
+ 114          {
+ 115   1              uchar i;
+ 116   1              v=2;
+ 117   1              offsetb=2*offset;                                       //每次偏移一列
+C51 COMPILER V9.01   TEXT01                                                                01/07/2021 19:20:03 PAGE 3   
+
+ 118   1              if(offsetb>=224)                                        
+ 119   1                          offset=0;
+ 120   1              for(i=0;i<8;i++)
+ 121   1                      {
+ 122   2                              nss=0;
+ 123   2                              sendbyte(0xff);                         //左半屏幕显示
+ 124   2                              sendbyte(lietab[i]);            //采用列扫描 在lietab[]中取值
+ 125   2                              sendbyte(tab[2*i+1+224-offsetb]);//与电路和tab[]有关
+ 126   2                              sendbyte(tab[2*i+224-offsetb]); //与电路和tab[]有关
+ 127   2                              nss=1;                                          //595串入并出 4个值都送完了,才一起显示,
+ 128   2                              delayms(3);                                     //不然送一个显示一个会闪烁
+ 129   2                      }
+ 130   1                      for(i=8;i<16;i++)
+ 131   1                      {
+ 132   2                              nss=0;
+ 133   2                              sendbyte(lietab[i-8]);          //采用列扫描 在lietab[]中取值
+ 134   2                              sendbyte(0xff);                         //右半屏幕显示
+ 135   2                              sendbyte(tab[2*i+1+224-offsetb]);
+ 136   2                              sendbyte(tab[2*i+224-offsetb]);
+ 137   2                              nss=1;
+ 138   2                              delayms(3);
+ 139   2                      }               
+ 140   1      }
+ 141          
+ 142          /*************************模式3：上移显示****************************************/
+ 143           void display3()
+ 144          {
+ 145   1              uchar i;
+ 146   1              v=2;
+ 147   1              offsetb=2*offset;                                       //每次偏移一行
+ 148   1               if(offsetb>=224)
+ 149   1                      offset=0;
+ 150   1              for(i=0;i<8;i++)
+ 151   1              {
+ 152   2                      nss=0;
+ 153   2                      sendbyte(tab2[2*i+1+offsetb]);
+ 154   2                      sendbyte(tab2[2*i+offsetb]);
+ 155   2                      sendbyte(0x00);                         //上半屏幕显示
+ 156   2                      sendbyte(lietab2[i]);       //采用行扫描 在lietab2[]中取值
+ 157   2                      nss=1;                                          //595串入并出 4个值都送完了,才一起显示,
+ 158   2                      delayms(3);                                     //不然送一个显示一个会闪烁
+ 159   2              }
+ 160   1              for(i=8;i<16;i++)
+ 161   1              {
+ 162   2                      nss=0;  
+ 163   2                      sendbyte(tab2[2*i+1+offsetb]);
+ 164   2                      sendbyte(tab2[2*i+offsetb]); 
+ 165   2                      sendbyte(lietab2[i-8]);         //采用行扫描 在lietab2[]中取值
+ 166   2                      sendbyte(0x00);                         //下半屏幕显示
+ 167   2                      nss=1;
+ 168   2                      delayms(3);
+ 169   2              } 
+ 170   1      } 
+ 171          /*************************模式4：下移显示******************************************/
+ 172           void display4()
+ 173          {                                                                 
+ 174   1              uchar i;
+ 175   1              v=2;
+ 176   1              offsetb=2*offset;                                       //每次偏移一行
+ 177   1              if(offsetb>=224)
+ 178   1                      offset=0; 
+ 179   1              for(i=0;i<8;i++)
+C51 COMPILER V9.01   TEXT01                                                                01/07/2021 19:20:03 PAGE 4   
+
+ 180   1              {
+ 181   2                      nss=0;
+ 182   2                      sendbyte(tab2[2*i+1+224-offsetb]);//与电路和tab[]有关
+ 183   2                      sendbyte(tab2[2*i+224-offsetb]);        //与电路和tab[]有关
+ 184   2                      sendbyte(0x00);                         //上半屏幕显示
+ 185   2                      sendbyte(lietab2[i]);           //采用行扫描 在lietab2[]中取值
+ 186   2                      nss=1;                                          //595串入并出 4个值都送完了,才一起显示,
+ 187   2                      delayms(3);                                     //不然送一个显示一个会闪烁
+ 188   2              }
+ 189   1              for(i=8;i<16;i++)
+ 190   1              {
+ 191   2                      nss=0;  
+ 192   2                      sendbyte(tab2[2*i+1+224-offsetb]);
+ 193   2                      sendbyte(tab2[2*i+224-offsetb]); 
+ 194   2                      sendbyte(lietab2[i-8]);         //采用行扫描 在lietab2[]中取值
+ 195   2                      sendbyte(0x00);                         //下半屏幕显示
+ 196   2                      nss=1;
+ 197   2                      delayms(3);
+ 198   2              } 
+ 199   1      } 
+ 200          /*************************模式5：循环显示*****************************************/
+ 201          void display5()
+ 202          {
+ 203   1              uchar i;
+ 204   1              v=20;
+ 205   1              offsetb=32*offset+32;                           //整体偏移16列即一个屏幕的距离达成循环显示
+ 206   1              if(offsetb>=224)
+ 207   1                      offset=0;
+ 208   1              for(i=0;i<8;i++)
+ 209   1              {               
+ 210   2                      nss=0;
+ 211   2                      sendbyte(0xff);                         //左半屏幕显示
+ 212   2                      sendbyte(lietab[i]);            //采用列扫描 在lietab[]中取值
+ 213   2                      sendbyte(tab[2*i+1+offsetb]);//与电路和tab[]有关
+ 214   2                      sendbyte(tab[2*i+offsetb]);     //与电路和tab[]有关
+ 215   2                      nss=1;                                          //595串入并出 4个值都送完了,才一起显示,
+ 216   2                      delayms(3);                                     //不然送一个显示一个会闪烁
+ 217   2              }
+ 218   1              for(i=8;i<16;i++)
+ 219   1              {
+ 220   2                      nss=0;
+ 221   2                      sendbyte(lietab[i-8]);          //采用列扫描 在lietab[]中取值
+ 222   2                      sendbyte(0xff);                         //右半屏幕显示
+ 223   2                      sendbyte(tab[2*i+1+offsetb]);
+ 224   2                      sendbyte(tab[2*i+offsetb]);
+ 225   2                      nss=1;
+ 226   2                      delayms(3);
+ 227   2              } 
+ 228   1      }
+ 229          /************************中断初始化*****************************************/
+ 230          void init()             //中断
+ 231          {       /*T0初始化*/
+ 232   1              TMOD=0x01;      //T0的方式0，定时器16位定时器
+ 233   1              TR0=1;          //启动T0
+ 234   1              TH0=0x3c;
+ 235   1              TL0=0xb0;
+ 236   1              /*中断初始化*/
+ 237   1          IT0=1;              //外部中断0下降沿触发
+ 238   1              IT1=1;          //外部中断1下降沿触发
+ 239   1              EA=1;           //开总中断
+ 240   1              ET0=1;          //定时器0中断
+ 241   1              EX0=1;          //外部中断0
+C51 COMPILER V9.01   TEXT01                                                                01/07/2021 19:20:03 PAGE 5   
+
+ 242   1              EX1=1;          //外部中断1
+ 243   1              
+ 244   1              
+ 245   1              
+ 246   1      }
+ 247          /*************************定时器0中断服务(INT1)子程序*************************************/
+ 248          void time0() interrupt 1 
+ 249          {
+ 250   1              TH0=0x3c;
+ 251   1              TL0=0xb0;       //定时器初值
+ 252   1              count++;
+ 253   1              if(count>=v)             //控制滚动的速度
+ 254   1              {
+ 255   2                      if(flag==1)               //控制开始
+ 256   2                      {
+ 257   3                              count=0;
+ 258   3                              offset+=1;
+ 259   3                      }                               //滚动的偏移量offset
+ 260   2                      if(flag==0)               //控制暂停
+ 261   2                      {
+ 262   3                              count=0;
+ 263   3                              offset+=0;
+ 264   3                      }
+ 265   2              }               
+ 266   1      }
+ 267          /*************************按键3:模式切换,采用外部中断0服务子程序*************************************/
+ 268          void int0() interrupt 0 
+ 269          {
+ 270   1              a=a+1;
+ 271   1              offset=0;
+ 272   1              if(a==6)a=1;
+ 273   1      }
+ 274          void start()    //按键1
+ 275          {
+ 276   1              if(k1==0)
+ 277   1              {
+ 278   2                      DelayUs(10);//防抖
+ 279   2                      if(k1==0)
+ 280   2                      {
+ 281   3                              flag=1;
+ 282   3                      }
+ 283   2              }
+ 284   1      }
+ 285          void stop()
+ 286          {
+ 287   1              if(k2==0)
+ 288   1              {
+ 289   2                      DelayUs(10);//消抖
+ 290   2                      if(k2==0)
+ 291   2                      {
+ 292   3                              flag=0;
+ 293   3                      }
+ 294   2              }       
+ 295   1      }
+ 296          
+ 297          /***************************** 发送数据给595********************************/
+ 298          void sendbyte(unsigned char dat)
+ 299          {
+ 300   1              uchar i,temp;     
+ 301   1              temp=dat;
+ 302   1              for(i=0;i<8;i++)
+ 303   1              {       
+C51 COMPILER V9.01   TEXT01                                                                01/07/2021 19:20:03 PAGE 6   
+
+ 304   2                  clk=0;
+ 305   2                      if(temp&0x01)
+ 306   2                              ser=1;
+ 307   2                      else
+ 308   2                              ser=0;          
+ 309   2                      clk=1;
+ 310   2                      temp>>=1;
+ 311   2              }       
+ 312   1      }
+ 313          void delayms(unsigned char t)  //延时tms
+ 314          {
+ 315   1              unsigned char x,y;
+ 316   1              for(x=t;x>0;x--)
+ 317   1                      for(y=110;y>0;y--);
+ 318   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =   1290    ----
+   CONSTANT SIZE    =    512    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =     27       5
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

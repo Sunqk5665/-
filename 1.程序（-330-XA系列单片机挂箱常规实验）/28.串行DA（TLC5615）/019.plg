@@ -1,0 +1,15 @@
+<html>
+<body>
+<pre>
+<h1>礦ision Build Log</h1>
+<h2>Project:</h2>
+C:\Users\DuDaye\Desktop\5.程序（常规实验）\36.串行DA（TLC5615）\pxh.uvproj
+Project File Date:  08/28/2017
+
+<h2>Output:</h2>
+Rebuild target 'Target 1'
+compiling pxh.c...
+linking...
+Program Size: data=9.0 xdata=0 code=97
+creating hex file from "019"...
+"019" - 0 Error(s), 0 Warning(s).

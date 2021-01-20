@@ -1,0 +1,106 @@
+C51 COMPILER V9.59.0.0   PXH                                                               05/17/2017 16:54:34 PAGE 1   
+
+
+C51 COMPILER V9.59.0.0, COMPILATION OF MODULE PXH
+OBJECT MODULE PLACED IN pxh.OBJ
+COMPILER INVOKED BY: C:\Keil_v5\C51\BIN\C51.EXE pxh.c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND TABS(2)
+
+line level    source
+
+   1          /********************************************************
+   2          **名称：ADC0809模数转换实验
+   3          **功能：0809采集电压并在数码管上精确的显示
+   4          **时间：2017.3.15
+   5          *********************************************************/
+   6          #include<reg52.h>
+   7          #include<intrins.h>
+   8          
+   9          /***********ad0809与单片机的接口定义**********************/
+  10          sbit OE=P3^5;    
+  11          sbit EOC=P3^6;
+  12          sbit START=P3^4;
+  13          sbit CLK=P3^3;
+  14          sbit P30=P3^0;   
+  15          =
+*** ERROR C141 IN LINE 15 OF pxh.c: syntax error near '=', expected 'hdata'
+  16          unsigned int key;
+  17          unsigned char code tab[]={0xc0,0xf9,0xa4,0xb0,0x99,0x92,0x82,0xf8,0x80,0x90,0x88,0x83,0xc6,0xa1,0x86,0x8e,
+             -0xff};
+  18          unsigned char temdat[]={0,0,0};  //低-高
+  19          
+  20          void init();
+  21          void display(unsigned char *pl);
+  22          void delayms(unsigned char t);
+  23          
+  24          void main(void)
+  25          {
+  26   1        
+  27   1        init();
+  28   1        
+  29   1        while(1)
+  30   1        {
+  31   2          P1=0xf8;    // 选择IN0通道输入
+  32   2          START=0;
+  33   2          START=1;
+  34   2          START=0;    //启动AD转换
+  35   2          while(EOC==0) display(temdat);   //等待转换结束，如果这里用空语句，显示会很闪
+  36   2          OE=1;              //所以等待的时候，就让它显示转换前的值
+  37   2          key=P1;
+  38   2          OE=0;     //OE是将锁存器中的数据送出
+  39   2          key=1.96*key;     //将AD转换回来的数（0—255)  化为相应的电压y=(5/255)*x
+  40   2          temdat[2]=key/100;    // x∈(0,255) y∈(0,5)
+  41   2          temdat[1]=key/10%10;
+  42   2          temdat[0]=key%10;
+  43   2          display(temdat);
+  44   2        }
+  45   1      }
+  46          
+  47          void init()
+  48          {
+  49   1        TMOD=0x02;
+  50   1        TH0=0x14;
+  51   1        TL0=0x14;
+  52   1        TR0=1;
+  53   1        ET0=1;
+C51 COMPILER V9.59.0.0   PXH                                                               05/17/2017 16:54:34 PAGE 2   
+
+  54   1        EA=1;
+  55   1      }
+  56          
+  57          void time0() interrupt 1
+  58          {
+  59   1        CLK=~CLK;
+  60   1      }
+  61          
+  62          /********************************************************
+  63          **名称：显示子函数       
+  64          **功能：动态扫描P2口做为位选，P0口送段码
+  65          **输入：pl指向要显示数据的地址，最后3位
+  66          **返回：无
+  67          *******************************************************/
+  68          void display(unsigned char *pl)
+  69          {
+  70   1        P2=0x04;
+  71   1        P0=tab[*pl];        //低
+  72   1        delayms(3);
+  73   1        P0=0xff;
+  74   1        
+  75   1        P2=0x02;
+  76   1        P0=tab[*(pl+1)];      //中
+  77   1        delayms(3);
+  78   1        P0=0xff;
+  79   1        
+  80   1        P2=0x01;
+  81   1        P0=tab[*(pl+2)]&0x7f;   //高  //高位数码管总是带小数，因为电压的范围：0—5V
+  82   1        delayms(3);
+  83   1        P0=0xff;     
+  84   1      }
+  85          
+  86          void delayms(unsigned char t)
+  87          {
+  88   1        unsigned char x,y;
+  89   1        for(x=t;x>0;x--)
+  90   1          for(y=110;y>0;y--);
+  91   1      }
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  1 ERROR(S)

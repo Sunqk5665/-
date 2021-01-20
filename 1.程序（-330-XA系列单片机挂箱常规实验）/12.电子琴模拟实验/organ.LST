@@ -1,0 +1,174 @@
+A51 MACRO ASSEMBLER  ORGAN                                                                06/05/2019 11:13:18 PAGE     1
+
+
+MACRO ASSEMBLER A51 V8.02b
+OBJECT MODULE PLACED IN organ.OBJ
+ASSEMBLER INVOKED BY: E:\Keil\C51\BIN\A51.EXE organ.asm SET(SMALL) DEBUG EP
+
+LOC  OBJ            LINE     SOURCE
+
+                       1         ;µç×ÓÇÙ  -----------Á¬ÐøÐÍ   ²éÑ¯Ê½¼üÅÌ
+                       2         ;P3.2£¨INT0£©   ½ÓÑïÉùÆ÷
+                       3     
+                       4                       ;P1 ¼üÅÌ¶ÁÈë¿Ú    ²éÑ¯Ê½
+  0010                 5     Pulse    equ 10h  ;Âö³å
+  0050                 6     PulseCNT equ 50h  ;Âö³å¼ÆÊ
+  0040                 7     ToneHigh equ 40h  ;¸ßÒôµ÷
+  0041                 8     ToneLow  equ 41h  ;µÍÒôµ÷
+  0042                 9     Tone     equ 42h  ;Òôµ÷
+  0054                10     KeyBuf   equ 54h
+                      11     
+  00A0                12     Speaker  BIT  P2.0
+0000                  13              ORG  0000H
+0000 02008E           14              ljmp  Start
+000B                  15              org   000bh
+000B 020030           16              LJMP  Timer0Int
+0030                  17              ORG   0030H
+0030                  18     Timer0Int:        ;¶¨Ê±ÖÐ¶Ï
+0030 C0D0             19            push  PSW
+0032 C28C             20            clr   TR0
+0034 85408C           21            mov   TH0, ToneHigh
+0037 85418A           22            mov   TL0, ToneLow
+003A D28C             23            setb  TR0
+003C A210             24            mov   C, Pulse
+003E 92A0             25            MOV   Speaker,C
+                      26     
+0040 B210             27            CPL   Pulse
+0042 D0D0             28            pop   PSW
+0044 32               29            reti
+                      30     
+0045                  31     ToneTable:
+                      32           
+0045 FC42             33             DW    64578,64686,64778,64821
+0047 FCAE                    
+0049 FD0A                    
+004B FD35                    
+004D FD82             34             DW    64898,64968,65029
+004F FDC8                    
+0051 FE05                    
+                      35             
+0053                  36     TestKey:
+0053 7590FF           37             MOV   P1,  #0FFH
+0056 E590             38             MOV   A,   P1
+0058 F4               39             CPL   A                ; ¶ÁÈë¼ü×´Ì¬
+                      40     
+0059 22               41             ret
+                      42     
+005A FEFDFBF7         43     KeyTable:DB 0FEH,0FDH,0FBH,0F7H
+005E EFDFBF7F         44              DB 0EFH,0DFH,0BFH,07FH    ; ¼üÂë¶¨Òå
+                      45     
+                      46     
+0062                  47     GETKEY:
+0062 7E0A             48             MOV       R6,#10
+0064 1187             49             ACALL     DELAY
+0066 E590             50             MOV       A,P1
+0068 B4FF03           51             CJNE      A,#0FFH,K01               ;È·ÓÐ¼ü°´ÏÂ
+006B 02009A           52             LJMP      MLOOP
+006E 7B08             53     K01:    MOV       R3,#8                    ;8¸ö¼ü
+A51 MACRO ASSEMBLER  ORGAN                                                                06/05/2019 11:13:18 PAGE     2
+
+0070 7A00             54             MOV       R2,#0                    ;¼üÂë
+0072 F5F0             55             MOV       B,A                      ;ÔÝ´æ¼üÖµ
+0074 90005A           56             MOV       DPTR,#KeyTable
+0077 EA               57     K02:    MOV       A,R2
+0078 93               58             MOVC      A,@A+DPTR                ;´Ó¼üÖµ±íÖÐÈ¡¼üÖµ
+0079 B5F003           59             CJNE      A,B,K04                  ;¼üÖµ±È½Ï
+007C EA               60             MOV       A,R2                     ;µÃ¼üÂë
+007D 04               61             INC       A
+007E 22               62             RET
+007F 0A               63     K04:    INC       R2            ;²»ÏàµÈ£¬µ½¼ÌÐø·ÃÎÊ¼üÖµ±í
+0080 DBF5             64             DJNZ      R3,K02
+0082 74FF             65             MOV       A,#0FFH       ;¼üÖµ²»ÔÚ¼üÖµÖÐ£¬¼´¶à¼üÍ¬Ê±°´ÏÂ
+0084 02009A           66             LJMP      MLOOP
+                      67     
+0087                  68     Delay:               ; ÑÓÊ±×Ó³ÌÐò
+0087 7F00             69            mov   r7, #0
+0089                  70     DelayLoop:
+0089 DFFE             71            djnz  r7, DelayLoop
+008B DEFA             72            djnz  r6, Delay
+008D 22               73            ret
+                      74     
+                      75     
+                      76                  ;#########################
+008E                  77     Start:
+                      78     
+008E 758170           79            mov  sp, #70h
+0091 758901           80            mov  TMOD, #01  ;  Timer
+0094 75A882           81            mov  IE, #82h   ;  EA=1, IT0 = 1
+0097 754200           82            mov  Tone,#0
+009A                  83     MLoop:
+009A 1153             84            call TestKey
+009C 60FC             85            jz   MLoop
+009E 1162             86            call GetKey
+00A0 F5F0             87            mov  b, a
+00A2 60F6             88            jz   MLoop      ; = 0, < 1
+00A4 5408             89            anl  a, #8
+00A6 70F2             90            jnz  MLoop      ; > 8
+00A8 15F0             91            dec  b
+00AA E5F0             92            mov  a, b
+00AC 23               93            rl   a          ; a = a*2
+00AD F5F0             94            mov  b, a
+00AF 900045           95            mov  dptr, #ToneTable
+00B2 93               96            movc a, @a+dptr
+00B3 F540             97            mov  ToneHigh, a
+00B5 F58C             98            mov  TH0, a
+00B7 E5F0             99            mov  a, b
+00B9 04              100            inc  a
+00BA 93              101            movc a, @a+dptr
+00BB F541            102            mov  ToneLow, a
+00BD F58A            103            mov  TL0, a
+00BF D28C            104             SETB      TR0
+00C1 7590FF          105             MOV       P1,#0FFH
+00C4                 106     WAIT:
+00C4 E590            107             MOV       A,P1
+                     108     
+00C6 B4FFFB          109             CJNE      A,#0FFH, WAIT
+00C9 7E0A            110             MOV       R6,#10
+00CB 1187            111             ACALL     DELAY
+00CD C28C            112             CLR       TR0
+00CF 02009A          113             LJMP      MLOOP
+                     114             END
+A51 MACRO ASSEMBLER  ORGAN                                                                06/05/2019 11:13:18 PAGE     3
+
+SYMBOL TABLE LISTING
+------ ----- -------
+
+
+N A M E             T Y P E  V A L U E   ATTRIBUTES
+
+B. . . . . . . . .  D ADDR   00F0H   A   
+DELAY. . . . . . .  C ADDR   0087H   A   
+DELAYLOOP. . . . .  C ADDR   0089H   A   
+GETKEY . . . . . .  C ADDR   0062H   A   
+IE . . . . . . . .  D ADDR   00A8H   A   
+K01. . . . . . . .  C ADDR   006EH   A   
+K02. . . . . . . .  C ADDR   0077H   A   
+K04. . . . . . . .  C ADDR   007FH   A   
+KEYBUF . . . . . .  N NUMB   0054H   A   
+KEYTABLE . . . . .  C ADDR   005AH   A   
+MLOOP. . . . . . .  C ADDR   009AH   A   
+P1 . . . . . . . .  D ADDR   0090H   A   
+P2 . . . . . . . .  D ADDR   00A0H   A   
+PSW. . . . . . . .  D ADDR   00D0H   A   
+PULSE. . . . . . .  N NUMB   0010H   A   
+PULSECNT . . . . .  N NUMB   0050H   A   
+SP . . . . . . . .  D ADDR   0081H   A   
+SPEAKER. . . . . .  B ADDR   00A0H.0 A   
+START. . . . . . .  C ADDR   008EH   A   
+TESTKEY. . . . . .  C ADDR   0053H   A   
+TH0. . . . . . . .  D ADDR   008CH   A   
+TIMER0INT. . . . .  C ADDR   0030H   A   
+TL0. . . . . . . .  D ADDR   008AH   A   
+TMOD . . . . . . .  D ADDR   0089H   A   
+TONE . . . . . . .  N NUMB   0042H   A   
+TONEHIGH . . . . .  N NUMB   0040H   A   
+TONELOW. . . . . .  N NUMB   0041H   A   
+TONETABLE. . . . .  C ADDR   0045H   A   
+TR0. . . . . . . .  B ADDR   0088H.4 A   
+WAIT . . . . . . .  C ADDR   00C4H   A   
+
+
+REGISTER BANK(S) USED: 0 
+
+
+ASSEMBLY COMPLETE.  0 WARNING(S), 0 ERROR(S)

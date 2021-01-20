@@ -1,0 +1,4 @@
+"STARTUP.obj",
+"organ.obj" 
+TO "organ" 
+RAMSIZE(256) 

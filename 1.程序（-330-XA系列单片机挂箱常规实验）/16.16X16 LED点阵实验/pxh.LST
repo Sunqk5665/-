@@ -1,0 +1,128 @@
+C51 COMPILER V9.52.0.0   PXH                                                               03/13/2017 14:38:16 PAGE 1   
+
+
+C51 COMPILER V9.52.0.0, COMPILATION OF MODULE PXH
+OBJECT MODULE PLACED IN pxh.OBJ
+COMPILER INVOKED BY: E:\keil4\C51\BIN\C51.EXE pxh.c BROWSE DEBUG OBJECTEXTEND TABS(2)
+
+line level    source
+
+   1          /***************************************************************************
+   2          **实验名称: 16X16点阵滚动显示
+   3          **实验效果: "浙江求是科教设备有限公司"在16X16的点阵上有右至左移动.
+   4          **时间: 2017.3.13
+   5          **公    司: 浙江求实科教设备有限公司
+   6          ***************************************************************************/
+   7          /*****************************头文件声明**************************************/
+   8          #include<reg52.h>
+   9          #include<intrins.h>
+  10          #include<pxh.h>
+  11          /*****************************IO引脚定义*************************************/
+  12          sbit ser=P1^0;
+  13          sbit nss=P1^1;
+  14          sbit clk=P1^2;
+  15          /******************************数据定义*************************************/
+  16          unsigned char count;
+  17          unsigned int offset;
+  18          
+  19          unsigned char lietab[]={0x7f,0xbf,0xdf,0xef,0xf7,0xfb,0xfd,0xfe};
+  20          /*************************函数声明********************************************/
+  21          void sendbyte(unsigned char dat);
+  22          void delayms(unsigned char t);
+  23          void init();
+  24          
+  25          /***********************主函数开始********************************************/
+  26          void main()
+  27          {
+  28   1        unsigned char i;
+  29   1        init();
+  30   1        while(1)
+  31   1        { 
+  32   2          for(i=0;i<8;i++)
+  33   2          {
+  34   3            nss=0;
+  35   3            sendbyte(0xff);         //左半屏幕显示
+  36   3            sendbyte(lietab[i]);        //采用列扫描 在lietab[]中取值
+  37   3            sendbyte(tab[2*i+1+offset]);//与电路和tab[]有关
+  38   3            sendbyte(tab[2*i+offset]);  //与电路和tab[]有关
+  39   3            nss=1;            //595串入并出 4个值都送完了,才一起显示,
+  40   3            delayms(3);         //不然送一个显示一个会闪烁
+  41   3          }
+  42   2          for(i=8;i<16;i++)
+  43   2          {
+  44   3            nss=0;
+  45   3            sendbyte(lietab[i-8]);      //采用列扫描 在lietab[]中取值
+  46   3            sendbyte(0xff);         //右半屏幕显示
+  47   3            sendbyte(tab[2*i+1+offset]);
+  48   3            sendbyte(tab[2*i+offset]);
+  49   3            nss=1;
+  50   3            delayms(3);
+  51   3          } 
+  52   2         }
+  53   1      }
+  54          /*************************定时器T0初始化*****************************************/
+  55          void init()
+C51 COMPILER V9.52.0.0   PXH                                                               03/13/2017 14:38:16 PAGE 2   
+
+  56          {
+  57   1        TMOD=0x01;
+  58   1        EA=1;
+  59   1        ET0=1;
+  60   1        TH0=0x3c;
+  61   1        TL0=0xb0;
+  62   1        TR0=1;
+  63   1      }
+  64          /*************************定时器中断服务子程序*************************************/
+  65          void time0() interrupt 1 
+  66          {
+  67   1        TH0=0x3c;
+  68   1        TL0=0xb0;
+  69   1        count++;
+  70   1        if(count==2)     //控制滚动的速度
+  71   1        {
+  72   2          count=0;
+  73   2          offset+=2;     //滚动的偏移量offset
+  74   2          if(offset==4900)
+  75   2            offset=0;  //循环鼓动
+  76   2        }   
+  77   1      }
+  78          /***************************** 发送数据给595********************************/
+  79          void sendbyte(unsigned char dat)
+  80          {
+  81   1        unsigned char i,temp;    //串转并的一般方法
+  82   1        temp=dat;
+  83   1        for(i=0;i<8;i++)
+  84   1        {
+  85   2      //    nss=0;
+  86   2          if(temp&0x01)
+  87   2            ser=1;
+  88   2          else
+  89   2            ser=0;
+  90   2          clk=0;
+  91   2          _nop_();
+  92   2          _nop_();
+  93   2          clk=1;
+  94   2          temp>>=1;
+  95   2      //    nss=1;
+  96   2        } 
+  97   1      }
+  98          void delayms(unsigned char t)  //延时tms
+  99          {
+ 100   1        unsigned char x,y;
+ 101   1        for(x=t;x>0;x--)
+ 102   1          for(y=110;y>0;y--);
+ 103   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    281    ----
+   CONSTANT SIZE    =   3392    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =     11       1
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

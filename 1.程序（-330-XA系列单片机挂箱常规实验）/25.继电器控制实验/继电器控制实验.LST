@@ -1,0 +1,57 @@
+A51 MACRO ASSEMBLER  糭电芲縚制实验                                                       12/24/2010 14:26:06 PAGE     1
+
+
+MACRO ASSEMBLER A51 V7.07
+OBJECT MODULE PLACED IN 继电器控制实验.OBJ
+ASSEMBLER INVOKED BY: C:\Keil\C51\BIN\A51.EXE 继电器控制实验.asm SET(SMALL) DEBUG EP
+
+LOC  OBJ            LINE     SOURCE
+
+  0091                 1     JDQ EQU P1.1
+0000                   2     ORG 0000H
+0000 02002C            3     LJMP MAIN
+0003                   4     ORG 0003H
+0003 32                5     RETI
+000B                   6     ORG 000BH
+000B 32                7     RETI
+0013                   8     ORG 0013H
+0013 32                9     RETI
+001B                  10     ORG 001BH
+001B 32               11     RETI
+0023                  12     ORG 0023H
+0023 32               13     RETI
+002B                  14     ORG 002BH
+002B 32               15     RETI
+002C D291             16     MAIN: SETB JDQ;
+002E 120038           17             LCALL DL1S
+0031 C291             18             CLR JDQ;
+0033 120038           19             LCALL DL1S
+0036 80F4             20             JMP MAIN
+0038 7D02             21         DL1S:MOV R5,#02H
+003A 7EFF             22       DL11S:MOV R6,#0FFH
+003C 7FFF             23        DD: MOV R7,#0FFH
+003E DFFE             24            DJNZ R7,$
+0040 DEFA             25            DJNZ R6,DD
+0042 DDF6             26            DJNZ R5,DL11S
+0044 22               27            RET
+                      28             END
+A51 MACRO ASSEMBLER  糭电芲縚制实验                                                       12/24/2010 14:26:06 PAGE     2
+
+SYMBOL TABLE LISTING
+------ ----- -------
+
+
+N A M E             T Y P E  V A L U E   ATTRIBUTES
+
+DD . . . . . . . .  C ADDR   003CH   A   
+DL11S. . . . . . .  C ADDR   003AH   A   
+DL1S . . . . . . .  C ADDR   0038H   A   
+JDQ. . . . . . . .  B ADDR   0090H.1 A   
+MAIN . . . . . . .  C ADDR   002CH   A   
+P1 . . . . . . . .  D ADDR   0090H   A   
+
+
+REGISTER BANK(S) USED: 0 
+
+
+ASSEMBLY COMPLETE.  0 WARNING(S), 0 ERROR(S)

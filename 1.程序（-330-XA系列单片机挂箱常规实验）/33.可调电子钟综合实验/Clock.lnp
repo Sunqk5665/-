@@ -1,0 +1,5 @@
+"main.obj",
+"1302.obj",
+"LCD1602.obj" 
+TO "Clock" 
+RAMSIZE(256) 

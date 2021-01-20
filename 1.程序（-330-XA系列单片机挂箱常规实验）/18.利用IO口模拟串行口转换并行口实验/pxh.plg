@@ -1,0 +1,15 @@
+<html>
+<body>
+<pre>
+<h1>礦ision Build Log</h1>
+<h2>Project:</h2>
+C:\Users\Lenovo1\Desktop\三款单片机实验装置改动与整合\QSDP-T1\3.源程序\12.利用IO口模拟串行口转换并行口实验\pxh.uvproj
+Project File Date:  12/12/2010
+
+<h2>Output:</h2>
+Build target 'Target 1'
+compiling pxh.c...
+linking...
+Program Size: data=10.0 xdata=0 code=95
+creating hex file from "012"...
+"012" - 0 Error(s), 0 Warning(s).

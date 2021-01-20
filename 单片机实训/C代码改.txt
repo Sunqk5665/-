@@ -1,0 +1,299 @@
+/***************************************************************************
+**实验名称: 16X16点阵滚动显示
+**实验效果: 
+**实验作者：Sunqker
+**时间: 2021/01/04
+***************************************************************************/
+/*****************************头文件声明**************************************/
+#include<reg52.h>
+#include<intrins.h>
+#include<pxh.h>
+#define uchar unsigned char
+#define uint unsigned int
+/*****************************IO引脚定义*************************************/
+sbit ser=P1^0;
+sbit nss=P1^1;
+sbit clk=P1^2;
+sbit k2=P3^2;//按键2定义
+/******************************数据定义*************************************/
+unsigned char count;
+unsigned int offset;
+uint offsetb; //控制不同子函数的偏移量
+uint v=2;//控制速度
+unsigned char KY;
+unsigned char num=0;//记录中断次数
+unsigned char pic=0;//记录按键次数
+
+unsigned char lietab[]={0x7f,0xbf,0xdf,0xef,0xf7,0xfb,0xfd,0xfe};
+uchar lietab2[]={0x80,0x40,0x20,0x10,0x08,0x04,0x02,0x01};//行扫描
+/*************************函数声明********************************************/
+void display1(void);
+void display2(void);
+void display3(void);
+void display4(void);
+void display5(void);
+
+void sendbyte(unsigned char dat);
+void delayms(unsigned char t);
+void init();
+
+/********************/
+void DelayUs(int M)
+{
+    int x;
+    for(x=0;x<=M;x++);
+}
+/***********************主函数开始********************************************/
+void main()
+{
+	init();
+	IT0=1;
+	EX0=1;
+	EA=1;//开中断，下降沿中断
+	KY=0;
+	while(1)
+	{	
+		if(k2==0)
+		{
+			DelayUs(1000);//按键去抖
+			if(k2==0);
+			pic++;
+			if(pic>5)pic=0;
+			while(k2==0);	
+		}
+	}
+}
+
+/**************按键1：暂停*********************/
+
+/**************按键2：播放*********************/
+
+/**************按键3：方式切换(INT0)*********************/
+
+
+void modeSwitch(void) interrupt 0
+{
+	if(KY==0)
+	{
+		//num++;	//计算中断次数
+		switch(pic)//选择模式
+		{
+			case 0:
+				display1();
+			case 1:
+				display2();break;
+			case 2:
+				display3();break;
+			case 3:
+				display4();break;
+			case 4:
+				display5();break;
+			default:
+				display1();
+		}
+	}
+}
+
+
+/*************************定时器中断服务子程序*************************************/
+void time0() interrupt 1 
+{
+	TH0=0x3c;
+	TL0=0xb0;
+	count++;
+	if(count==2)		 //控制滚动的速度
+	{
+		count=0;
+		offset+=2;		 //滚动的偏移量offset
+		if(offset==4900)
+			offset=0;	 //循环滚动
+	}		
+}
+/*****************5种切换模式***********************/
+/****模式 1 :左移显示******/
+void display1()
+{
+	uchar i;
+	v=20;
+	offsetb=2*offset;
+	if(offsetb>=224)
+		offset=0;	 //循环滚动
+	for(i=0;i<8;i++)
+	{
+		nss=0;
+		sendbyte(0xff);			   	//左半屏幕显示
+		sendbyte(lietab[i]);       	//采用列扫描 在lietab[]中取值
+		sendbyte(tab[2*i+1+offsetb]);//与电路和tab[]有关
+		sendbyte(tab[2*i+offsetb]);	//与电路和tab[]有关
+		nss=1;						//595串入并出 4个值都送完了,才一起显示,
+		delayms(3);					//不然送一个显示一个会闪烁
+	}
+	for(i=8;i<16;i++)
+	{
+		nss=0;
+		sendbyte(lietab[i-8]);	   	//采用列扫描 在lietab[]中取值
+		sendbyte(0xff);			   	//右半屏幕显示
+		sendbyte(tab[2*i+1+offsetb]);
+		sendbyte(tab[2*i+offsetb]);
+		nss=1;
+		delayms(3);
+	} 
+}
+
+/****模式 2 :右移显示******/
+
+ void display2()
+{
+	uchar i;
+	v=2;
+	offsetb=2*offset;					//每次偏移一列
+	if(offsetb>=224)					
+		    offset=0;
+	for(i=0;i<8;i++)
+		{
+			nss=0;
+			sendbyte(0xff);			   	//左半屏幕显示
+			sendbyte(lietab[i]);       	//采用列扫描 在lietab[]中取值
+			sendbyte(tab[2*i+1+224-offsetb]);//与电路和tab[]有关
+			sendbyte(tab[2*i+224-offsetb]);	//与电路和tab[]有关
+			nss=1;						//595串入并出 4个值都送完了,才一起显示,
+			delayms(3);					//不然送一个显示一个会闪烁
+		}
+		for(i=8;i<16;i++)
+		{
+			nss=0;
+			sendbyte(lietab[i-8]);	   	//采用列扫描 在lietab[]中取值
+			sendbyte(0xff);			   	//右半屏幕显示
+			sendbyte(tab[2*i+1+224-offsetb]);
+			sendbyte(tab[2*i+224-offsetb]);
+			nss=1;
+			delayms(3);
+		} 		
+}
+/****模式 3 :上移显示******/
+void display3()
+{
+	uchar i;
+	v=2;
+	offsetb=2*offset;		    	//每次偏移一行
+	 if(offsetb>=224)
+		offset=0;
+	for(i=0;i<8;i++)
+	{
+		nss=0;
+		sendbyte(tab2[2*i+1+offsetb]);
+		sendbyte(tab2[2*i+offsetb]);
+		sendbyte(0x00);			   	//上半屏幕显示
+		sendbyte(lietab2[i]);       //采用行扫描 在lietab2[]中取值
+		nss=1;						//595串入并出 4个值都送完了,才一起显示,
+		delayms(3);					//不然送一个显示一个会闪烁
+	}
+	for(i=8;i<16;i++)
+	{
+		nss=0;
+			
+		sendbyte(tab2[2*i+1+offsetb]);
+		sendbyte(tab2[2*i+offsetb]); 
+		sendbyte(lietab2[i-8]);	   	//采用行扫描 在lietab2[]中取值
+		sendbyte(0x00);			   	//下半屏幕显示
+		nss=1;
+		delayms(3);
+	} 
+} 
+/****模式 4 :下移显示******/
+void display4()
+{								  
+	uchar i;
+	v=2;
+	offsetb=2*offset;					//每次偏移一行
+	if(offsetb>=224)
+		offset=0; 
+	for(i=0;i<8;i++)
+	{
+		nss=0;
+		sendbyte(tab2[2*i+1+224-offsetb]);//与电路和tab[]有关
+		sendbyte(tab2[2*i+224-offsetb]);	//与电路和tab[]有关
+		sendbyte(0x00);			   	//上半屏幕显示
+		sendbyte(lietab2[i]);       	//采用行扫描 在lietab2[]中取值
+		nss=1;						//595串入并出 4个值都送完了,才一起显示,
+		delayms(3);					//不然送一个显示一个会闪烁
+	}
+	for(i=8;i<16;i++)
+	{
+		nss=0;	
+		sendbyte(tab2[2*i+1+224-offsetb]);
+		sendbyte(tab2[2*i+224-offsetb]); 
+		sendbyte(lietab2[i-8]);	   	//采用行扫描 在lietab2[]中取值
+		sendbyte(0x00);			   	//下半屏幕显示
+		nss=1;
+		delayms(3);
+	} 
+} 
+/****模式 5 :循环显示******/
+void display5()
+{
+	
+	uchar i;
+	v=20;
+	offsetb=32*offset+32;				//整体偏移16列即一个屏幕的距离达成循环显示
+	if(offsetb>=224)
+		offset=0;
+	for(i=0;i<8;i++)
+	{		
+		nss=0;
+		sendbyte(0xff);			   	//左半屏幕显示
+		sendbyte(lietab[i]);       	//采用列扫描 在lietab[]中取值
+		sendbyte(tab[2*i+1+offsetb]);//与电路和tab[]有关
+		sendbyte(tab[2*i+offsetb]);	//与电路和tab[]有关
+		nss=1;						//595串入并出 4个值都送完了,才一起显示,
+		delayms(3);					//不然送一个显示一个会闪烁
+	}
+	for(i=8;i<16;i++)
+	{
+		nss=0;
+		sendbyte(lietab[i-8]);	   	//采用列扫描 在lietab[]中取值
+		sendbyte(0xff);			   	//右半屏幕显示
+		sendbyte(tab[2*i+1+offsetb]);
+		sendbyte(tab[2*i+offsetb]);
+		nss=1;
+		delayms(3);
+	} 
+}
+
+/*************************定时器T0初始化*****************************************/
+void init()
+{
+	TMOD=0x01;
+	EA=1;
+	ET0=1;
+	TH0=0x3c;
+	TL0=0xb0;
+	TR0=1;
+}
+
+/***************************** 发送数据给595********************************/
+void sendbyte(unsigned char dat)
+{
+	unsigned char i,temp;	   //串转并的一般方法
+	temp=dat;
+	for(i=0;i<8;i++)
+	{
+//		nss=0;
+		if(temp&0x01)
+			ser=1;
+		else
+			ser=0;
+		clk=0;
+		_nop_();
+		_nop_();
+		clk=1;
+		temp>>=1;
+//		nss=1;
+	}	
+}
+void delayms(unsigned char t)  //延时tms
+{
+	unsigned char x,y;
+	for(x=t;x>0;x--)
+		for(y=110;y>0;y--);
+}

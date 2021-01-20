@@ -1,0 +1,60 @@
+C51 COMPILER V9.59.0.0   PXH                                                               05/17/2017 14:50:29 PAGE 1   
+
+
+C51 COMPILER V9.59.0.0, COMPILATION OF MODULE PXH
+OBJECT MODULE PLACED IN pxh.OBJ
+COMPILER INVOKED BY: C:\Keil_v5\C51\BIN\C51.EXE pxh.c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND TABS(2)
+
+line level    source
+
+   1          /*************************************************
+   2          **名称：串行数转换并行数实验
+   3          **功能：串行输入并行输出，就是用串口扩展8个IO口
+   4          **时间：2017.3.13
+   5          *************************************************/
+   6          #include<reg52.h>
+   7          #include<intrins.h>
+   8          #define uchar unsigned char 
+   9          
+  10          sbit CLE=P1^0;        //164的清零位
+  11          
+  12          void delayms(uchar t);
+  13          void main(void)
+  14          {
+  15   1        uchar temp;
+  16   1        temp=0x01;
+  17   1        ES=0;         //串口工作在方式0，扩展并行IO口，不需要进入中断
+  18   1        SCON=0x00;        //设置串行口控制寄存器
+  19   1        while(1)
+  20   1        {
+  21   2          CLE=1;
+  22   2          SBUF=temp;
+  23   2          while(!TI);   //发送完8位数据中断标志位置1，由软件清0
+  24   2          TI=0;
+  25   2          delayms(250);
+  26   2          delayms(250);
+  27   2          temp=_cror_(temp,1);
+  28   2        }
+  29   1      }
+  30          
+  31          void delayms(uchar t)
+  32          {
+  33   1        uchar x,y;
+  34   1        for(x=t;x>0;x--)
+  35   1          for(y=110;y>0;y--);
+  36   1      }
+  37          
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =     72    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----       1
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

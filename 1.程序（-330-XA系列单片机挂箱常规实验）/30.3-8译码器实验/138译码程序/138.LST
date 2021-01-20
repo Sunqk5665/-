@@ -1,0 +1,46 @@
+A51 MACRO ASSEMBLER  138                                                                  06/12/2019 12:06:56 PAGE     1
+
+
+MACRO ASSEMBLER A51 V8.02b
+OBJECT MODULE PLACED IN 138.OBJ
+ASSEMBLER INVOKED BY: E:\Keil\C51\BIN\A51.EXE 138.asm SET(SMALL) DEBUG EP
+
+LOC  OBJ            LINE     SOURCE
+
+                       1                
+0000                   2     ORG         0000H
+0000 021000            3     LJMP        MAIN   
+                       4               
+1000                   5     ORG         1000H
+1000                   6     MAIN:
+1000 758160            7          MOV SP,#60h
+1003 7C00              8          MOV  R4,#0
+1005 DCFE              9          DJNZ R4,$
+                      10                   ;ÉèÖÃ138ÒëÂëÆ÷µÄÊ¹ÄÜ
+1007 C295             11          CLR  P1.5
+1009 C294             12          CLR  P1.4
+100B D293             13          SETB  P1.3
+                      14                    ;;138ÒëÂëÆ÷Ê¾ÝÊäÈë
+100D C290             15          CLR   P1.0;¶ÔÓ¦138µÄA  ¿ÉÒÔ¸Ä±äÏàÓ¦×´Ì¬µÄÖµ¶ø¸Ä±ä138ÒëÂëÆ÷µÄÊä³ö
+100F C291             16          CLR   P1.1;¶ÔÓ¦138µÄB
+1011 C292             17          CLR   P1.2;¶ÔÓ¦138µÄC
+1013 80FE             18          SJMP  $
+                      19     
+                      20          END
+A51 MACRO ASSEMBLER  138                                                                  06/12/2019 12:06:56 PAGE     2
+
+SYMBOL TABLE LISTING
+------ ----- -------
+
+
+N A M E             T Y P E  V A L U E   ATTRIBUTES
+
+MAIN . . . . . . .  C ADDR   1000H   A   
+P1 . . . . . . . .  D ADDR   0090H   A   
+SP . . . . . . . .  D ADDR   0081H   A   
+
+
+REGISTER BANK(S) USED: 0 
+
+
+ASSEMBLY COMPLETE.  0 WARNING(S), 0 ERROR(S)

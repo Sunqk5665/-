@@ -1,0 +1,113 @@
+BL51 BANKED LINKER/LOCATER V6.22                                                        01/14/2011  16:22:28  PAGE 1
+
+
+BL51 BANKED LINKER/LOCATER V6.22, INVOKED BY:
+D:\PROGRAM FILES\KEIL C51 V9.0\C51\BIN\BL51.EXE pxh.obj TO pxh RAMSIZE (256)
+
+
+MEMORY MODEL: SMALL
+
+
+INPUT MODULES INCLUDED:
+  pxh.obj (PXH)
+  D:\PROGRAM FILES\KEIL C51 V9.0\C51\LIB\C51S.LIB (?C_STARTUP)
+
+
+LINK MAP OF MODULE:  pxh (PXH)
+
+
+            TYPE    BASE      LENGTH    RELOCATION   SEGMENT NAME
+            -----------------------------------------------------
+
+            * * * * * * *   D A T A   M E M O R Y   * * * * * * *
+            REG     0000H     0008H     ABSOLUTE     "REG BANK 0"
+            IDATA   0008H     0001H     UNIT         ?STACK
+
+            * * * * * * *   C O D E   M E M O R Y   * * * * * * *
+            CODE    0000H     0003H     ABSOLUTE     
+            CODE    0003H     002BH     UNIT         ?PR?_TLC5615?PXH
+            CODE    002EH     0027H     UNIT         ?PR?MAIN?PXH
+            CODE    0055H     000CH     UNIT         ?C_C51STARTUP
+
+
+
+OVERLAY MAP OF MODULE:   pxh (PXH)
+
+
+SEGMENT
+  +--> CALLED SEGMENT
+---------------------
+?C_C51STARTUP
+  +--> ?PR?MAIN?PXH
+
+?PR?MAIN?PXH
+  +--> ?PR?_TLC5615?PXH
+
+
+
+SYMBOL TABLE OF MODULE:  pxh (PXH)
+
+  VALUE           TYPE          NAME
+  ----------------------------------
+
+  -------         MODULE        PXH
+  C:0000H         SYMBOL        _ICE_DUMMY_
+  D:0090H         PUBLIC        P1
+  D:00B0H         PUBLIC        P3
+  D:00A8H         PUBLIC        IE
+  B:0090H.0       PUBLIC        CS
+  D:00B8H         PUBLIC        IP
+  C:002EH         PUBLIC        main
+  D:0098H         PUBLIC        SCON
+BL51 BANKED LINKER/LOCATER V6.22                                                      01/14/2011  16:22:28  PAGE 2
+
+
+  D:0088H         PUBLIC        TCON
+  C:0003H         PUBLIC        _TLC5615
+  B:0090H.2       PUBLIC        DIN
+  B:0090H.1       PUBLIC        SCK
+  D:00C8H         PUBLIC        T2CON
+  D:00D0H         PUBLIC        PSW
+  -------         PROC          _TLC5615
+  D:0006H         SYMBOL        dat
+  -------         DO            
+  D:0005H         SYMBOL        i
+  -------         ENDDO         
+  C:0003H         LINE#         7
+  C:0003H         LINE#         8
+  C:0003H         LINE#         10
+  C:0005H         LINE#         11
+  C:0007H         LINE#         12
+  C:0009H         LINE#         13
+  C:000BH         LINE#         14
+  C:0016H         LINE#         15
+  C:0018H         LINE#         16
+  C:0018H         LINE#         17
+  C:001CH         LINE#         18
+  C:001EH         LINE#         19
+  C:0025H         LINE#         20
+  C:0027H         LINE#         21
+  C:002BH         LINE#         22
+  C:002DH         LINE#         23
+  -------         ENDPROC       _TLC5615
+  -------         PROC          MAIN
+  -------         DO            
+  D:0002H         SYMBOL        V_dat
+  D:0004H         SYMBOL        i
+  -------         ENDDO         
+  C:002EH         LINE#         25
+  C:002EH         LINE#         26
+  C:002EH         LINE#         27
+  C:0031H         LINE#         29
+  C:0031H         LINE#         30
+  C:0031H         LINE#         31
+  C:003AH         LINE#         32
+  C:0041H         LINE#         34
+  C:0044H         LINE#         35
+  C:004BH         LINE#         36
+  C:004DH         LINE#         37
+  -------         ENDPROC       MAIN
+  -------         ENDMOD        PXH
+
+Program Size: data=9.0 xdata=0 code=97
+LINK/LOCATE RUN COMPLETE.  0 WARNING(S),  0 ERROR(S)

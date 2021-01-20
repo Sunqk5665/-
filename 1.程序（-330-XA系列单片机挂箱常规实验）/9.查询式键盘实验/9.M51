@@ -1,0 +1,169 @@
+BL51 BANKED LINKER/LOCATER V6.22                                                        03/14/2017  11:02:56  PAGE 1
+
+
+BL51 BANKED LINKER/LOCATER V6.22, INVOKED BY:
+E:\KEIL4\C51\BIN\BL51.EXE pxh.obj TO 9 RAMSIZE (256)
+
+
+MEMORY MODEL: SMALL
+
+
+INPUT MODULES INCLUDED:
+  pxh.obj (PXH)
+  E:\KEIL4\C51\LIB\C51S.LIB (?C_STARTUP)
+  E:\KEIL4\C51\LIB\C51S.LIB (?C?CLDPTR)
+  E:\KEIL4\C51\LIB\C51S.LIB (?C_INIT)
+
+
+LINK MAP OF MODULE:  9 (PXH)
+
+
+            TYPE    BASE      LENGTH    RELOCATION   SEGMENT NAME
+            -----------------------------------------------------
+
+            * * * * * * *   D A T A   M E M O R Y   * * * * * * *
+            REG     0000H     0008H     ABSOLUTE     "REG BANK 0"
+            DATA    0008H     0002H     UNIT         ?DT?PXH
+            IDATA   000AH     0001H     UNIT         ?STACK
+
+            * * * * * * *   C O D E   M E M O R Y   * * * * * * *
+            CODE    0000H     0003H     ABSOLUTE     
+            CODE    0003H     008CH     UNIT         ?C_C51STARTUP
+            CODE    008FH     005AH     UNIT         ?PR?SCANKEY?PXH
+            CODE    00E9H     0019H     UNIT         ?C?LIB_CODE
+            CODE    0102H     0015H     UNIT         ?PR?_DISPLAY?PXH
+            CODE    0117H     0011H     UNIT         ?CO?PXH
+            CODE    0128H     0010H     UNIT         ?PR?MAIN?PXH
+            CODE    0138H     000EH     UNIT         ?PR?_DELAYMS?PXH
+            CODE    0146H     0004H     UNIT         ?C_INITSEG
+
+
+
+OVERLAY MAP OF MODULE:   9 (PXH)
+
+
+SEGMENT
+  +--> CALLED SEGMENT
+---------------------
+?C_C51STARTUP
+  +--> ?PR?MAIN?PXH
+  +--> ?C_INITSEG
+
+?PR?MAIN?PXH
+  +--> ?PR?SCANKEY?PXH
+  +--> ?PR?_DISPLAY?PXH
+
+?PR?SCANKEY?PXH
+  +--> ?PR?_DELAYMS?PXH
+
+?PR?_DISPLAY?PXH
+  +--> ?CO?PXH
+  +--> ?PR?_DELAYMS?PXH
+BL51 BANKED LINKER/LOCATER V6.22                                                      03/14/2017  11:02:56  PAGE 2
+
+
+
+
+
+SYMBOL TABLE OF MODULE:  9 (PXH)
+
+  VALUE           TYPE          NAME
+  ----------------------------------
+
+  -------         MODULE        PXH
+  C:0000H         SYMBOL        _ICE_DUMMY_
+  D:0080H         PUBLIC        P0
+  D:0090H         PUBLIC        P1
+  D:00A0H         PUBLIC        P2
+  D:00B0H         PUBLIC        P3
+  D:00A8H         PUBLIC        IE
+  D:00B8H         PUBLIC        IP
+  C:0128H         PUBLIC        main
+  D:0098H         PUBLIC        SCON
+  D:0088H         PUBLIC        TCON
+  C:0117H         PUBLIC        tab
+  D:0009H         PUBLIC        key
+  D:00C8H         PUBLIC        T2CON
+  C:008FH         PUBLIC        scankey
+  C:0138H         PUBLIC        _delayms
+  C:0102H         PUBLIC        _display
+  D:00D0H         PUBLIC        PSW
+  -------         PROC          MAIN
+  C:0128H         LINE#         14
+  C:0128H         LINE#         15
+  C:0128H         LINE#         16
+  C:0128H         LINE#         17
+  C:0128H         LINE#         18
+  C:012DH         LINE#         19
+  C:0136H         LINE#         20
+  -------         ENDPROC       MAIN
+  -------         PROC          SCANKEY
+  -------         DO            
+  D:0008H         SYMBOL        num
+  -------         ENDDO         
+  C:008FH         LINE#         23
+  C:008FH         LINE#         24
+  C:008FH         LINE#         26
+  C:0094H         LINE#         27
+  C:0094H         LINE#         28
+  C:0099H         LINE#         29
+  C:009EH         LINE#         30
+  C:009EH         LINE#         31
+  C:00C0H         LINE#         32
+  C:00C0H         LINE#         33
+  C:00C3H         LINE#         34
+  C:00C5H         LINE#         35
+  C:00C8H         LINE#         36
+  C:00CAH         LINE#         37
+  C:00CDH         LINE#         38
+  C:00CFH         LINE#         39
+  C:00D2H         LINE#         40
+  C:00D4H         LINE#         41
+BL51 BANKED LINKER/LOCATER V6.22                                                      03/14/2017  11:02:56  PAGE 3
+
+
+  C:00D7H         LINE#         42
+  C:00D9H         LINE#         43
+  C:00DCH         LINE#         44
+  C:00DEH         LINE#         45
+  C:00E1H         LINE#         46
+  C:00E3H         LINE#         47
+  C:00E6H         LINE#         48
+  C:00E6H         LINE#         49
+  C:00E6H         LINE#         50
+  C:00E6H         LINE#         51
+  C:00E6H         LINE#         52
+  C:00E6H         LINE#         53
+  C:00E6H         LINE#         54
+  C:00E8H         LINE#         55
+  -------         ENDPROC       SCANKEY
+  -------         PROC          _DISPLAY
+  D:0001H         SYMBOL        pl
+  C:0102H         LINE#         62
+  C:0102H         LINE#         63
+  C:0102H         LINE#         64
+  C:0105H         LINE#         65
+  C:010EH         LINE#         66
+  C:0113H         LINE#         67
+  C:0116H         LINE#         68
+  -------         ENDPROC       _DISPLAY
+  -------         PROC          _DELAYMS
+  D:0007H         SYMBOL        t
+  -------         DO            
+  D:0007H         SYMBOL        x
+  D:0006H         SYMBOL        y
+  -------         ENDDO         
+  C:0138H         LINE#         69
+  C:0138H         LINE#         70
+  C:0138H         LINE#         72
+  C:013EH         LINE#         73
+  C:0145H         LINE#         74
+  -------         ENDPROC       _DELAYMS
+  -------         ENDMOD        PXH
+
+  -------         MODULE        ?C?CLDPTR
+  C:00E9H         PUBLIC        ?C?CLDPTR
+  -------         ENDMOD        ?C?CLDPTR
+
+Program Size: data=11.0 xdata=0 code=330
+LINK/LOCATE RUN COMPLETE.  0 WARNING(S),  0 ERROR(S)

@@ -1,0 +1,19 @@
+<html>
+<body>
+<pre>
+<h1>礦ision Build Log</h1>
+<h2>Project:</h2>
+C:\Users\DuDaye\Desktop\5.程序（常规实验）\38.看门狗实验(箭头)\pxh.uvproj
+Project File Date:  06/10/2019
+
+<h2>Output:</h2>
+Rebuild target 'Target 1'
+compiling pxh.c...
+linking...
+*** WARNING L15: MULTIPLE CALL TO SEGMENT
+    SEGMENT: ?PR?RESPONS?PXH
+    CALLER1: ?PR?INIT0?PXH
+    CALLER2: ?C_C51STARTUP
+Program Size: data=24.0 xdata=0 code=4777
+creating hex file from "pxh"...
+"pxh" - 0 Error(s), 1 Warning(s).
