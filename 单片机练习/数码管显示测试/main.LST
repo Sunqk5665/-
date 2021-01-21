@@ -1,0 +1,47 @@
+C51 COMPILER V9.01   MAIN                                                                  11/18/2020 13:03:24 PAGE 1   
+
+
+C51 COMPILER V9.01, COMPILATION OF MODULE MAIN
+OBJECT MODULE PLACED IN main.OBJ
+COMPILER INVOKED BY: D:\KEILC51\C51\BIN\C51.EXE main.c BROWSE DEBUG OBJECTEXTEND
+
+line level    source
+
+   1          #include<reg52.h>
+   2          char code smgduan[17]={0x3f,0x06,0x5b,0x4f,0x66,0x6d,0x7d,0x07,
+   3                                                  0x7f,0x6f,0x77,0x7c,0x39,0x5e,0x79,0x71};
+   4          delay(unsigned int i){while(i--);}
+   5          int main()
+   6          {       
+   7   1              int i;
+   8   1              P2=0x5<<5;         //010100000
+   9   1              P0=0x80;
+  10   1              while(1)
+  11   1              {
+  12   2                      for(i=0;i<8;i++)
+  13   2                      {
+  14   3                      //P2=0x4<<5;
+  15   3                      //P0=~(0x01<<i);
+  16   3                      //delay(20000);
+  17   3                              P2=0x7<<5;P0=~smgduan[i];       //第一步，共阳极，送段码
+  18   3                              P2=0x6<<5;P0=0x01<<i;           //第二步，送位码，1、2、4、8、16、32、64、128，分别为1-8位
+  19   3                              delay(300);                                     //第三步，延时，必须大于20ms让我们看到断续
+  20   3                              P2=0x7<<5;P0=00;                        //第四步，清除段码，消去重影
+  21   3                      }
+  22   2              }
+  23   1      }
+*** WARNING C290 IN LINE 4 OF MAIN.C: missing return value
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =     82    ----
+   CONSTANT SIZE    =     17    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  1 WARNING(S),  0 ERROR(S)
